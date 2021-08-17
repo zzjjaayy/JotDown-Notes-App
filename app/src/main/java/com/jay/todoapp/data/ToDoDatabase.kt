@@ -1,11 +1,10 @@
 package com.jay.todoapp.data
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 
 @Database(entities = [ToDoData::class], version = 1, exportSchema = false)
+@TypeConverters(PriorityConverter::class) // This is to let Room know about the conversion
 abstract class ToDoDatabase : RoomDatabase(){
 
     abstract fun toDoDao() : ToDoDao
