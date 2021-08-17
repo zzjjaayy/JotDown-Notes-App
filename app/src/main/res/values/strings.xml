@@ -7,4 +7,9 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="priority_level">Choose Priority Level</string>
+    <string name="search">Search</string>
+    <string name="high_priority">High Priority</string>
+    <string name="sort_by">Sort by</string>
+    <string name="low_priority">Low Priority</string>
+    <string name="delete_all">Delete All</string>
 </resources>

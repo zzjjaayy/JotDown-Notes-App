@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<!--    Action view class will link the icon with the widget-->
+    <item
+        android:title="@string/search"
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:iconTint="@color/white"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+    <group>
+        <item
+            android:title="@string/sort_by"
+            android:id="@+id/sort_by">
+            <menu>
+                <item
+                    android:title="@string/high_priority"
+                    android:id="@+id/menu_priority_high" />
+                <item
+                    android:title="@string/low_priority"
+                    android:id="@+id/menu_priority_low" />
+            </menu>
+        </item>
+    </group>
+
+    <item
+        android:id="@+id/menu_delete"
+        android:title="@string/delete_all"
+        app:showAsAction="never" />
+</menu>
