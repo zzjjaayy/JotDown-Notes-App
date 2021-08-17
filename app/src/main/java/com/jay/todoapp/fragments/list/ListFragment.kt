@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.navigation.fragment.findNavController
 import com.jay.todoapp.R
 import com.jay.todoapp.databinding.FragmentListBinding
@@ -21,7 +22,7 @@ class ListFragment : Fragment() {
             // Inflate the layout for this fragment
             val fragmentBinding = FragmentListBinding.inflate(inflater, container, false)
             _binding = fragmentBinding
-            return fragmentBinding.root
+            return binding.root
        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,5 +35,10 @@ class ListFragment : Fragment() {
                 findNavController().navigate(R.id.action_listFragment_to_updateFragment)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
