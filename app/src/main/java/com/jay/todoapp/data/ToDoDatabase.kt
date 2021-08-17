@@ -2,6 +2,7 @@ package com.jay.todoapp.data
 
 import android.content.Context
 import androidx.room.*
+import com.jay.todoapp.data.model.ToDoData
 
 @Database(entities = [ToDoData::class], version = 1, exportSchema = false)
 @TypeConverters(PriorityConverter::class) // This is to let Room know about the conversion

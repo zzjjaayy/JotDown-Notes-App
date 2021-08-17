@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.jay.todoapp.data.model.ToDoData
 
 // Dao stands for Data Access Object which holds all the functions mapping to various queries to the DB
 @Dao

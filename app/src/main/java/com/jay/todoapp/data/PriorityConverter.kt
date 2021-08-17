@@ -1,6 +1,7 @@
 package com.jay.todoapp.data
 
 import androidx.room.TypeConverter
+import com.jay.todoapp.data.model.Priority
 
 // Room allows primitive and boxed data types but not object references, therefore, we create a
 // converter which converts the Priority value from the enum class when reading or writing to the DB.
