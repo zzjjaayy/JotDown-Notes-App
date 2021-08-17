@@ -26,8 +26,13 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.floatingActionButton.setOnClickListener {
-            findNavController().navigate(R.id.action_listFragment_to_addFragment)
+        binding.apply {
+            floatingActionButton.setOnClickListener {
+                findNavController().navigate(R.id.action_listFragment_to_addFragment)
+            }
+            listLayout.setOnClickListener {
+                findNavController().navigate(R.id.action_listFragment_to_updateFragment)
+            }
         }
     }
 }
