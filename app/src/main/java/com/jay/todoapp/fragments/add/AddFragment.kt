@@ -1,10 +1,8 @@
 package com.jay.todoapp.fragments.add
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.jay.todoapp.R
 import com.jay.todoapp.databinding.FragmentAddBinding
@@ -26,9 +24,16 @@ class AddFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Options Menu
+        setHasOptionsMenu(true)
+
         // This is to set up the dropdown menu
         val items = listOf("High", "Medium", "Low")
         val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_list_item, items)
         binding.autocompleteTextView.setAdapter(adapter)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.add_fragment_menu, menu)
     }
 }

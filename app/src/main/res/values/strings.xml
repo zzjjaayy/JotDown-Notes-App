@@ -12,4 +12,6 @@
     <string name="sort_by">Sort by</string>
     <string name="low_priority">Low Priority</string>
     <string name="delete_all">Delete All</string>
+    <string name="add_note">Add Note</string>
+    <string name="delete_note">Delete Note</string>
 </resources>
