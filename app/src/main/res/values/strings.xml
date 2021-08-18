@@ -6,7 +6,7 @@
     <string name="no_data">No Data</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
-    <string name="priority_level">Choose Priority Level</string>
+    <string name="priority_level">Priority Level</string>
     <string name="search">Search</string>
     <string name="high_priority">High Priority</string>
     <string name="sort_by">Sort by</string>

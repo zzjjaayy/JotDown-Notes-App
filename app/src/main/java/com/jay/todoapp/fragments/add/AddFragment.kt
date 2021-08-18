@@ -1,17 +1,14 @@
 package com.jay.todoapp.fragments.add
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.jay.todoapp.R
-import com.jay.todoapp.data.model.Priority
-import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoViewModel
 import com.jay.todoapp.databinding.FragmentAddBinding
 
@@ -32,16 +29,30 @@ class AddFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        // This is to set up the dropdown menu
+        val items = listOf("High", "Medium", "Low")
+        val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_list_item, items)
+        binding.autocompleteTextView.setAdapter(adapter)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // Options Menu
         setHasOptionsMenu(true)
 
-        // This is to set up the dropdown menu
-        val items = listOf("High", "Medium", "Low")
-        val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_list_item, items)
-        binding.autocompleteTextView.setAdapter(adapter)
+        // item click Listener for the DropDown
+        binding.autocompleteTextView.onItemClickListener =
+            OnItemClickListener { parent, view, position, id ->
+                when(position) {
+                    0 -> {binding.autocompleteTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))}
+                    1 -> {binding.autocompleteTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.yellow))}
+                    2 -> {binding.autocompleteTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))}
+                }
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

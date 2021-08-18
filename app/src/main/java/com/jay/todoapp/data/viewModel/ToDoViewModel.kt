@@ -2,10 +2,15 @@ package com.jay.todoapp.data.viewModel
 
 import android.app.Application
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import com.jay.todoapp.R
 import com.jay.todoapp.data.ToDoDatabase
 import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoData
@@ -67,4 +72,22 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
                 Priority.LOW}
         }
     }
+
+    // Selected Listener for the DropDown to change colors
+    val dropDownListener : AdapterView.OnItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(
+            parent: AdapterView<*>?,
+            view: View?,
+            position: Int,
+            id: Long
+        ) {
+            when(position) {
+                0 -> {(parent?.getChildAt(0) as TextView).setTextColor(ContextCompat.getColor(application, R.color.red))}
+                1 -> {(parent?.getChildAt(1) as TextView).setTextColor(ContextCompat.getColor(application, R.color.yellow))}
+                2 -> {(parent?.getChildAt(2) as TextView).setTextColor(ContextCompat.getColor(application, R.color.green))}
+            }
+        }
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
+    }
+
 }
