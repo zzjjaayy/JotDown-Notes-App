@@ -1,10 +1,7 @@
 package com.jay.todoapp.data
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.jay.todoapp.data.model.ToDoData
 
 // Dao stands for Data Access Object which holds all the functions mapping to various queries to the DB
@@ -18,4 +15,7 @@ interface ToDoDao {
     // suspend keyword states that this function will be executed in a coroutine {BG thread}
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertToDoData(toDoData: ToDoData)
+
+    @Update
+    suspend fun updateToDoData(toDoData: ToDoData)
 }

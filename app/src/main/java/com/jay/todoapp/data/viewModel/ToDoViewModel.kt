@@ -21,6 +21,9 @@ import kotlinx.coroutines.launch
 // AndroidViewModel is just like viewModel but provides access to the application context directly
 class ToDoViewModel(application: Application) : AndroidViewModel(application) {
 
+    /*
+    * DATABASE QUERIES
+    * */
     private val toDoDao = ToDoDatabase.getDatabase(application).toDoDao()
     private val repository : ToDoRepository
 
@@ -39,6 +42,16 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    private fun updateData(toDoData: ToDoData) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateData(toDoData)
+        }
+    }
+
+    /*
+    * FUNCTIONS FOR OTHER LOGIC
+    * */
+
     fun insertDataToDb(toDoTitle: String, toDoDesc: String, priorityLevel: String) : Boolean{
         return if(verifyUserData(toDoTitle, priorityLevel)) {
             val newData = ToDoData(
@@ -48,6 +61,19 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
                 toDoDesc
             )
             insertData(newData)
+            true
+        } else false
+    }
+
+    fun updateDataToDb(toDoId: Int, toDoTitle: String, toDoDesc: String, priorityLevel: String) : Boolean{
+        return if(verifyUserData(toDoTitle, priorityLevel)) {
+            val updatedData = ToDoData(
+                toDoId, // This is set to auto increment so room will handle it
+                parsePriority(priorityLevel),
+                toDoTitle,
+                toDoDesc
+            )
+            updateData(updatedData)
             true
         } else false
     }
@@ -75,23 +101,6 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
             else -> {
                 Priority.LOW}
         }
-    }
-
-    // Selected Listener for the DropDown to change colors
-    val dropDownListener : AdapterView.OnItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onItemSelected(
-            parent: AdapterView<*>?,
-            view: View?,
-            position: Int,
-            id: Long
-        ) {
-            when(position) {
-                0 -> {(parent?.getChildAt(0) as TextView).setTextColor(ContextCompat.getColor(application, R.color.red))}
-                1 -> {(parent?.getChildAt(1) as TextView).setTextColor(ContextCompat.getColor(application, R.color.yellow))}
-                2 -> {(parent?.getChildAt(2) as TextView).setTextColor(ContextCompat.getColor(application, R.color.green))}
-            }
-        }
-        override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
 
 }

@@ -41,7 +41,8 @@ class ListFragment : Fragment() {
                 val action = ListFragmentDirections.actionListFragmentToUpdateFragment(
                     currentTitle = it.title,
                     currentDesc = it.description,
-                    currentPriority = it.priority.name
+                    currentPriority = it.priority.name,
+                    currentId = it.id
                 )
                 view.findNavController().navigate(action)
             }

@@ -55,5 +55,8 @@
         <argument
             android:name="currentPriority"
             app:argType="string" />
+        <argument
+            android:name="currentId"
+            app:argType="integer" />
     </fragment>
 </navigation>
