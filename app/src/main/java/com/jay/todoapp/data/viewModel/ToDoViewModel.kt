@@ -23,11 +23,15 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
 
     private val toDoDao = ToDoDatabase.getDatabase(application).toDoDao()
     private val repository : ToDoRepository
-    private val getAllData: LiveData<List<ToDoData>>
+
+    private val _getAllData: LiveData<List<ToDoData>>
+
     init {
         repository = ToDoRepository(toDoDao)
-        getAllData = repository.getAllData
+        _getAllData = repository.getAllData
     }
+
+    val getAllData: LiveData<List<ToDoData>> = _getAllData
 
     private fun insertData(toDoData: ToDoData) {
         viewModelScope.launch(Dispatchers.IO) {

@@ -36,7 +36,7 @@
             android:maxLength="20"
             android:textColor="@color/light_gray"
             android:textSize="24sp"
-            android:textStyle="bold|italic"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sample TODO Title" />

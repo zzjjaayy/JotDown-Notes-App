@@ -4,11 +4,17 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jay.todoapp.R
+import com.jay.todoapp.data.viewModel.ToDoViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
 
 class ListFragment : Fragment() {
+
+    private val sharedViewModel : ToDoViewModel by activityViewModels()
 
     private var _binding : FragmentListBinding? = null
     private val binding get() = _binding!!
@@ -18,14 +24,19 @@ class ListFragment : Fragment() {
            savedInstanceState: Bundle?
        ): View? {
             // Inflate the layout for this fragment
-            val fragmentBinding = FragmentListBinding.inflate(inflater, container, false)
-            _binding = fragmentBinding
+            _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
             return binding.root
        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
+            // Setting lifecycle owner so Data Binding can observe the LiveData
+            lifecycleOwner = this@ListFragment
+            viewModel = sharedViewModel
+
+            // setting an adapter to the recycler view
+            notesListRecyclerView.adapter = ToDoListAdapter()
             floatingActionButton.setOnClickListener {
                 findNavController().navigate(R.id.action_listFragment_to_addFragment)
             }

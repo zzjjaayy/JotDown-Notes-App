@@ -2,9 +2,12 @@ package com.jay.todoapp.fragments.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.jay.todoapp.R
+import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.databinding.ToDoLayoutBinding
 
@@ -14,6 +17,11 @@ class ToDoListAdapter : ListAdapter<ToDoData, ToDoListAdapter.ToDoViewHolder>(Di
         fun bind(toDoData: ToDoData) {
             binding.toDoTitle.text = toDoData.title
             binding.toDoDescription.text = toDoData.description
+            when(toDoData.priority) {
+                Priority.HIGH -> binding.priorityIndicator.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.red))
+                Priority.MEDIUM -> binding.priorityIndicator.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.yellow))
+                Priority.LOW -> binding.priorityIndicator.setCardBackgroundColor(ContextCompat.getColor(binding.root.context, R.color.green))
+            }
         }
     }
 
@@ -29,8 +37,10 @@ class ToDoListAdapter : ListAdapter<ToDoData, ToDoListAdapter.ToDoViewHolder>(Di
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoViewHolder {
-        return ToDoViewHolder(ToDoLayoutBinding.inflate(
-            LayoutInflater.from(parent.context)))
+        return ToDoViewHolder(
+            ToDoLayoutBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false))
+        // passing the parent view is important to inflate all XML properties
     }
 
     override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {
