@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,6 +39,16 @@ class ListFragment : Fragment() {
             lifecycleOwner = this@ListFragment
             viewModel = sharedViewModel
 
+            // This observer will change the isEmpty live data every time the data set is changed
+            sharedViewModel.getAllData.observe(viewLifecycleOwner, {
+                sharedViewModel.checkIfDbEmpty(it) // passing the new list to the checker
+            })
+
+            // This will change the visibility as per the value of the live data
+            sharedViewModel.isEmptyDb.observe(viewLifecycleOwner, {
+                displayEmptyDbSign(it)
+            })
+
             // setting an adapter to the recycler view
             notesListRecyclerView.adapter = ToDoListAdapter {
                 val action = ListFragmentDirections.actionListFragmentToUpdateFragment(
@@ -53,6 +64,16 @@ class ListFragment : Fragment() {
             }
         }
         setHasOptionsMenu(true)
+    }
+
+    private fun displayEmptyDbSign(isEmpty: Boolean) {
+        if(isEmpty) {
+            binding.noDataImage.visibility = View.VISIBLE
+            binding.noDataText.visibility = View.VISIBLE
+        } else {
+            binding.noDataImage.visibility = View.INVISIBLE
+            binding.noDataText.visibility = View.INVISIBLE
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.jay.todoapp.R
 import com.jay.todoapp.data.ToDoDatabase
@@ -28,6 +29,11 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
     private val repository : ToDoRepository
 
     private val _getAllData: LiveData<List<ToDoData>>
+
+    val isEmptyDb : MutableLiveData<Boolean> = MutableLiveData(false)
+    fun checkIfDbEmpty(toDoData: List<ToDoData>) {
+        isEmptyDb.value = toDoData.isEmpty()
+    }
 
     init {
         repository = ToDoRepository(toDoDao)
