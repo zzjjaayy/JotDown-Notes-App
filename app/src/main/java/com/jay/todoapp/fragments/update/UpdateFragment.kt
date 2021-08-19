@@ -1,5 +1,6 @@
 package com.jay.todoapp.fragments.update
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.renderscript.RenderScript
 import android.view.*
@@ -95,10 +96,24 @@ class UpdateFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.menu_save) {
-            updatingItem()
+        when (item.itemId) {
+            R.id.menu_save -> updatingItem()
+            R.id.menu_delete -> confirmItemRemoval()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun confirmItemRemoval() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+            deleteItem()
+            Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_updateFragment_to_listFragment)
+        }
+        alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
+        alertDialogBuilder.setTitle("Delete this Todo?")
+        alertDialogBuilder.setMessage("Are you sure you want to delete \"$currentTitle\"?")
+        alertDialogBuilder.create().show()
     }
 
     private fun updatingItem() {
@@ -110,5 +125,14 @@ class UpdateFragment : Fragment() {
             Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_updateFragment_to_listFragment)
         }
+    }
+
+    private fun deleteItem() {
+        val parsedPriority : String = when(currentPriority) {
+            Priority.HIGH -> "High"
+            Priority.MEDIUM -> "Medium"
+            else -> "Low"
+        }
+        sharedViewModel.deleteSingleItemFromDb(currentId!!.toInt(), currentTitle, currentDesc, parsedPriority)
     }
 }

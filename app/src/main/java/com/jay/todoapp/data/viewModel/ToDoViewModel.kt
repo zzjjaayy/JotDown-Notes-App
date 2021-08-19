@@ -48,6 +48,12 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    private fun deleteSingleDataItem(toDoData: ToDoData) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteData(toDoData)
+        }
+    }
+
     /*
     * FUNCTIONS FOR OTHER LOGIC
     * */
@@ -68,7 +74,7 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
     fun updateDataToDb(toDoId: Int, toDoTitle: String, toDoDesc: String, priorityLevel: String) : Boolean{
         return if(verifyUserData(toDoTitle, priorityLevel)) {
             val updatedData = ToDoData(
-                toDoId, // This is set to auto increment so room will handle it
+                toDoId,
                 parsePriority(priorityLevel),
                 toDoTitle,
                 toDoDesc
@@ -76,6 +82,16 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
             updateData(updatedData)
             true
         } else false
+    }
+
+    fun deleteSingleItemFromDb(toDoId: Int, toDoTitle: String, toDoDesc: String, priorityLevel: String) {
+        val itemToBeDeleted = ToDoData(
+            toDoId,
+            parsePriority(priorityLevel),
+            toDoTitle,
+            toDoDesc
+        )
+        deleteSingleDataItem(itemToBeDeleted)
     }
 
     private fun verifyUserData(title: String, priority: String) : Boolean{
