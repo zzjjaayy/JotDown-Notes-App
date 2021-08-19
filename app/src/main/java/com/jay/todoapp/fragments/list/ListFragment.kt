@@ -1,9 +1,11 @@
 package com.jay.todoapp.fragments.list
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
@@ -57,8 +59,27 @@ class ListFragment : Fragment() {
         inflater.inflate(R.menu.list_fragment_menu, menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if(item.itemId == R.id.menu_delete_all) {
+            confirmRemoval()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun confirmRemoval() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+            sharedViewModel.deleteAllData()
+            Toast.makeText(context, "Successfully Deleted All TODOs", Toast.LENGTH_SHORT).show()
+        }
+        alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
+        alertDialogBuilder.setTitle("Delete all TODOs?")
+        alertDialogBuilder.setMessage("Are you sure you want to delete all TODOs?")
+        alertDialogBuilder.create().show()
     }
 }
