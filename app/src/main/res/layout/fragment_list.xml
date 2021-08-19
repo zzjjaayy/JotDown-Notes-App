@@ -41,7 +41,8 @@
             android:src="@drawable/ic_add_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="@string/add_a_new_note" />
+            android:contentDescription="@string/add_a_new_note"
+            app:navigateToAddFragment="@{true}"/>
 
         <ImageView
             android:id="@+id/no_data_image"
@@ -55,7 +56,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.407"
             android:contentDescription="@string/no_data"
-            android:visibility="invisible" />
+            app:emptyDatabase="@{viewModel.isEmptyDb()}" />
 
         <TextView
             android:id="@+id/no_data_text"
@@ -68,7 +69,7 @@
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/no_data_image"
-            android:visibility="invisible" />
+            app:emptyDatabase="@{viewModel.isEmptyDb()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

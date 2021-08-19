@@ -44,11 +44,6 @@ class ListFragment : Fragment() {
                 sharedViewModel.checkIfDbEmpty(it) // passing the new list to the checker
             })
 
-            // This will change the visibility as per the value of the live data
-            sharedViewModel.isEmptyDb.observe(viewLifecycleOwner, {
-                displayEmptyDbSign(it)
-            })
-
             // setting an adapter to the recycler view
             notesListRecyclerView.adapter = ToDoListAdapter {
                 val action = ListFragmentDirections.actionListFragmentToUpdateFragment(
@@ -59,21 +54,8 @@ class ListFragment : Fragment() {
                 )
                 view.findNavController().navigate(action)
             }
-            floatingActionButton.setOnClickListener {
-                findNavController().navigate(R.id.action_listFragment_to_addFragment)
-            }
         }
         setHasOptionsMenu(true)
-    }
-
-    private fun displayEmptyDbSign(isEmpty: Boolean) {
-        if(isEmpty) {
-            binding.noDataImage.visibility = View.VISIBLE
-            binding.noDataText.visibility = View.VISIBLE
-        } else {
-            binding.noDataImage.visibility = View.INVISIBLE
-            binding.noDataText.visibility = View.INVISIBLE
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -92,6 +74,7 @@ class ListFragment : Fragment() {
         _binding = null
     }
 
+    // Confirms the removal of all items with a dialog box
     private fun confirmRemoval() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
