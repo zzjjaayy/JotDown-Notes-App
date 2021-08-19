@@ -11,7 +11,7 @@ import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.databinding.ToDoLayoutBinding
 
-class ToDoListAdapter : ListAdapter<ToDoData, ToDoListAdapter.ToDoViewHolder>(DiffCallback) {
+class ToDoListAdapter(private val onToDoClicked: (ToDoData) -> Unit) : ListAdapter<ToDoData, ToDoListAdapter.ToDoViewHolder>(DiffCallback) {
 
     class ToDoViewHolder(private val binding: ToDoLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(toDoData: ToDoData) {
@@ -37,10 +37,15 @@ class ToDoListAdapter : ListAdapter<ToDoData, ToDoListAdapter.ToDoViewHolder>(Di
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoViewHolder {
-        return ToDoViewHolder(
+        val viewHolder = ToDoViewHolder(
             ToDoLayoutBinding.inflate(
             LayoutInflater.from(parent.context), parent, false))
-        // passing the parent view is important to inflate all XML properties
+        // passing the parent view is important to inflate all XML properties.
+
+        viewHolder.itemView.setOnClickListener {
+            onToDoClicked(getItem(viewHolder.adapterPosition))
+        }
+        return viewHolder
     }
 
     override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {

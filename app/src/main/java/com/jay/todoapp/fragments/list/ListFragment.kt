@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jay.todoapp.R
@@ -36,12 +37,16 @@ class ListFragment : Fragment() {
             viewModel = sharedViewModel
 
             // setting an adapter to the recycler view
-            notesListRecyclerView.adapter = ToDoListAdapter()
+            notesListRecyclerView.adapter = ToDoListAdapter {
+                val action = ListFragmentDirections.actionListFragmentToUpdateFragment(
+                    currentTitle = it.title,
+                    currentDesc = it.description,
+                    currentPriority = it.priority.name
+                )
+                view.findNavController().navigate(action)
+            }
             floatingActionButton.setOnClickListener {
                 findNavController().navigate(R.id.action_listFragment_to_addFragment)
-            }
-            listLayout.setOnClickListener {
-                findNavController().navigate(R.id.action_listFragment_to_updateFragment)
             }
         }
         setHasOptionsMenu(true)
