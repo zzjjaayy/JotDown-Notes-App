@@ -11,7 +11,9 @@ import com.jay.todoapp.R
 import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoData
 
-class ToDoAdapter(private val dataSet: List<ToDoData>) : RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder>(){
+class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit) : RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder>(){
+
+    private var dataSet: List<ToDoData> = emptyList()
 
     class ToDoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val toDoTitle: TextView = view.findViewById(R.id.to_do_title)
@@ -37,5 +39,8 @@ class ToDoAdapter(private val dataSet: List<ToDoData>) : RecyclerView.Adapter<To
 
     override fun getItemCount(): Int = dataSet.size
 
-    fun setData() {notifyDataSetChanged()}
+    fun setData(toDoData: List<ToDoData>) {
+        dataSet = toDoData
+        notifyDataSetChanged()
+    }
 }

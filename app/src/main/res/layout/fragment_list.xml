@@ -27,8 +27,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:clipToPadding="false"
-            android:paddingTop="8dp"
-            app:listData="@{viewModel.getAllData}"/>
+            android:paddingTop="8dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floatingActionButton"

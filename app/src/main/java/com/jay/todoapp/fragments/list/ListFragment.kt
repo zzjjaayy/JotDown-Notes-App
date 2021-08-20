@@ -25,6 +25,8 @@ class ListFragment : Fragment() {
     private var _binding : FragmentListBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var mAdapter: ToDoAdapter
+
     override fun onCreateView(
            inflater: LayoutInflater, container: ViewGroup?,
            savedInstanceState: Bundle?
@@ -43,25 +45,30 @@ class ListFragment : Fragment() {
 
             // This observer will change the isEmpty live data every time the data set is changed
             sharedViewModel.getAllData.observe(viewLifecycleOwner, {
-                sharedViewModel.checkIfDbEmpty(it) // passing the new list to the checker
+//                sharedViewModel.checkIfDbEmpty(it) // passing the new list to the checker
+                mAdapter.setData(it)
             })
-
-            // setting an adapter to the recycler view
-            notesListRecyclerView.adapter = ToDoListAdapter {
-                val action = ListFragmentDirections.actionListFragmentToUpdateFragment(
-                    currentTitle = it.title,
-                    currentDesc = it.description,
-                    currentPriority = it.priority.name,
-                    currentId = it.id
-                )
-                view.findNavController().navigate(action)
-            }
-            // these functions and properties belong to a third party library by "github/wasabeef"
-            notesListRecyclerView.itemAnimator = LandingAnimator().apply{
-                addDuration = 300
-            }
         }
+        setUpRecyclerView()
         setHasOptionsMenu(true)
+    }
+
+    private fun setUpRecyclerView() {
+        // setting an adapter to the recycler view
+        mAdapter = ToDoAdapter {
+            val action = ListFragmentDirections.actionListFragmentToUpdateFragment(
+                currentTitle = it.title,
+                currentDesc = it.description,
+                currentPriority = it.priority.name,
+                currentId = it.id
+            )
+            findNavController().navigate(action)
+        }
+        binding.notesListRecyclerView.adapter = mAdapter
+        // these functions and properties belong to a third party library by "github/wasabeef"
+        binding.notesListRecyclerView.itemAnimator = LandingAnimator().apply{
+            addDuration = 300
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

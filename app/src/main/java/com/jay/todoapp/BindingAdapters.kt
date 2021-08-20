@@ -8,12 +8,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.fragments.list.ToDoListAdapter
 
-@BindingAdapter("listData")
-fun bindRecyclerView(recyclerView: RecyclerView,
-                     data: List<ToDoData>?) {
-    val adapter = recyclerView.adapter as ToDoListAdapter
-    adapter.submitList(data)
-}
+//@BindingAdapter("listData")
+//fun bindRecyclerView(recyclerView: RecyclerView,
+//                     data: List<ToDoData>?) {
+//    val adapter = recyclerView.adapter as ToDoListAdapter
+//    adapter.submitList(data)
+//}
 
 @BindingAdapter("navigateToAddFragment")
 fun navigateToAddFragment(view: FloatingActionButton, navigate: Boolean) {
