@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.jay.todoapp.R
 import com.jay.todoapp.data.viewModel.ToDoViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
+import jp.wasabeef.recyclerview.animators.LandingAnimator
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
 class ListFragment : Fragment() {
 
@@ -53,6 +55,10 @@ class ListFragment : Fragment() {
                     currentId = it.id
                 )
                 view.findNavController().navigate(action)
+            }
+            // these functions and properties belong to a third party library by "github/wasabeef"
+            notesListRecyclerView.itemAnimator = LandingAnimator().apply{
+                addDuration = 300
             }
         }
         setHasOptionsMenu(true)
