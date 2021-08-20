@@ -13,7 +13,7 @@ import com.jay.todoapp.data.model.ToDoData
 
 class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit) : RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder>(){
 
-    private var dataSet: List<ToDoData> = emptyList()
+    var dataSet: List<ToDoData> = emptyList()
 
     class ToDoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val toDoTitle: TextView = view.findViewById(R.id.to_do_title)

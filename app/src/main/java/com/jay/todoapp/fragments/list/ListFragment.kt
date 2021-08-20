@@ -11,8 +11,11 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.jay.todoapp.R
+import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.viewModel.ToDoViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
 import jp.wasabeef.recyclerview.animators.LandingAnimator
@@ -69,6 +72,24 @@ class ListFragment : Fragment() {
         binding.notesListRecyclerView.itemAnimator = LandingAnimator().apply{
             addDuration = 300
         }
+        swipeToDelete(binding.notesListRecyclerView)
+    }
+
+    private fun swipeToDelete(recyclerView: RecyclerView) {
+        val swipeToDeleteCallback = object : SwipeToDelete() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val item = mAdapter.dataSet[viewHolder.adapterPosition]
+                sharedViewModel.deleteSingleItemFromDb(item.id,
+                    item.title,
+                    item.description,
+                    sharedViewModel.parsedPriority(item.priority)
+                )
+                Toast.makeText(context, "Successfully Deleted ${item.title}", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

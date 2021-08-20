@@ -128,11 +128,6 @@ class UpdateFragment : Fragment() {
     }
 
     private fun deleteItem() {
-        val parsedPriority : String = when(currentPriority) {
-            Priority.HIGH -> "High"
-            Priority.MEDIUM -> "Medium"
-            else -> "Low"
-        }
-        sharedViewModel.deleteSingleItemFromDb(currentId!!.toInt(), currentTitle, currentDesc, parsedPriority)
+        sharedViewModel.deleteSingleItemFromDb(currentId!!.toInt(), currentTitle, currentDesc, sharedViewModel.parsedPriority(currentPriority))
     }
 }

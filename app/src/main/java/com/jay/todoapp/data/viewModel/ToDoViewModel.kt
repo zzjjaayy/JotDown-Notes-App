@@ -73,7 +73,7 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         return if(verifyUserData(toDoTitle, priorityLevel)) {
             val newData = ToDoData(
                 0, // This is set to auto increment so room will handle it
-                parsePriority(priorityLevel),
+                parseStringToPriority(priorityLevel),
                 toDoTitle,
                 toDoDesc
             )
@@ -86,7 +86,7 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         return if(verifyUserData(toDoTitle, priorityLevel)) {
             val updatedData = ToDoData(
                 toDoId,
-                parsePriority(priorityLevel),
+                parseStringToPriority(priorityLevel),
                 toDoTitle,
                 toDoDesc
             )
@@ -98,7 +98,7 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteSingleItemFromDb(toDoId: Int, toDoTitle: String, toDoDesc: String, priorityLevel: String) {
         val itemToBeDeleted = ToDoData(
             toDoId,
-            parsePriority(priorityLevel),
+            parseStringToPriority(priorityLevel),
             toDoTitle,
             toDoDesc
         )
@@ -119,7 +119,7 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun parsePriority(priority: String) : Priority {
+    private fun parseStringToPriority(priority: String) : Priority {
         return when(priority) {
             "High" -> {
                 Priority.HIGH}
@@ -127,6 +127,14 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
                 Priority.MEDIUM}
             else -> {
                 Priority.LOW}
+        }
+    }
+
+    fun parsedPriority(priority: Priority) : String{
+        return when(priority) {
+            Priority.HIGH -> "High"
+            Priority.MEDIUM -> "Medium"
+            else -> "Low"
         }
     }
 
