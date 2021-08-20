@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jay.todoapp.R
 import com.jay.todoapp.data.model.Priority
@@ -40,12 +41,14 @@ class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit) : RecyclerView.
         }
     }
 
-    fun getItem(position: Int) : ToDoData = dataSet[position]
+    private fun getItem(position: Int) : ToDoData = dataSet[position]
 
     override fun getItemCount(): Int = dataSet.size
 
     fun setData(toDoData: List<ToDoData>) {
+        val diffUtil = ToDoDiffUtil(dataSet, toDoData)
+        val diffUtilResult = DiffUtil.calculateDiff(diffUtil) // This will calculate the difference
         dataSet = toDoData
-        notifyDataSetChanged()
+        diffUtilResult.dispatchUpdatesTo(this)
     }
 }
