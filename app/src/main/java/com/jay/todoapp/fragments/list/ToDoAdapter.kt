@@ -35,7 +35,12 @@ class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit) : RecyclerView.
             Priority.MEDIUM -> holder.toDoPriority.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.yellow))
             Priority.LOW -> holder.toDoPriority.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.green))
         }
+        holder.itemView.setOnClickListener {
+            onToDoClicked(getItem(holder.adapterPosition))
+        }
     }
+
+    fun getItem(position: Int) : ToDoData = dataSet[position]
 
     override fun getItemCount(): Int = dataSet.size
 
