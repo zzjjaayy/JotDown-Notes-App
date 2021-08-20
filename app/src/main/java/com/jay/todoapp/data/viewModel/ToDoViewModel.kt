@@ -82,6 +82,20 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         } else false
     }
 
+    // This is for cases when a deleted item needs to be inserted again
+    fun insertDataToDb(toDoId: Int, toDoTitle: String, toDoDesc: String, priorityLevel: String) : Boolean{
+        return if(verifyUserData(toDoTitle, priorityLevel)) {
+            val newData = ToDoData(
+                toDoId,
+                parseStringToPriority(priorityLevel),
+                toDoTitle,
+                toDoDesc
+            )
+            insertData(newData)
+            true
+        } else false
+    }
+
     fun updateDataToDb(toDoId: Int, toDoTitle: String, toDoDesc: String, priorityLevel: String) : Boolean{
         return if(verifyUserData(toDoTitle, priorityLevel)) {
             val updatedData = ToDoData(
