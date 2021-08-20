@@ -45,7 +45,7 @@ class ListFragment : Fragment() {
 
             // This observer will change the isEmpty live data every time the data set is changed
             sharedViewModel.getAllData.observe(viewLifecycleOwner, {
-//                sharedViewModel.checkIfDbEmpty(it) // passing the new list to the checker
+                sharedViewModel.checkIfDbEmpty(it) // passing the new list to the checker
                 mAdapter.setData(it)
             })
         }
