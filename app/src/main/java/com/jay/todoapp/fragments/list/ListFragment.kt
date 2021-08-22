@@ -37,6 +37,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
        ): View? {
             requireActivity().onBackPressedDispatcher.addCallback(this){
                 if(!searchView.isIconified) {
+                    searchView.setQuery("", true)
                     searchView.isIconified = true
                 } else activity?.finish()
             }
@@ -120,7 +121,6 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
         val search = menu.findItem(R.id.menu_search)
         searchView = (search.actionView as? SearchView)!!
-        searchView.isSubmitButtonEnabled = true
         searchView.setOnQueryTextListener(this)
     }
 
@@ -151,7 +151,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     // Triggered when you hit enter
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if(!query.isNullOrEmpty()) {
+        if(query != null) {
            searchQueryInDb(query)
         }
         return true
@@ -159,7 +159,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     // Triggered when you start typing
     override fun onQueryTextChange(query: String?): Boolean {
-        if(!query.isNullOrEmpty()) {
+        if(query != null) {
             searchQueryInDb(query)
         }
         return true
