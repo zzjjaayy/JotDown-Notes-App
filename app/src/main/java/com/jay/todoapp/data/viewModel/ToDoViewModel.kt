@@ -66,8 +66,13 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun searchDatabase(search : String) : LiveData<List<ToDoData>>{
-        return repository.searchDatabase(search)
+    fun searchDatabase(search : String, callbackResult: (List<ToDoData>) -> Unit){
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = repository.searchDatabase(search)
+            viewModelScope.launch(Dispatchers.Main) {
+                callbackResult(result)
+            }
+        }
     }
     /*
     * FUNCTIONS FOR OTHER LOGIC

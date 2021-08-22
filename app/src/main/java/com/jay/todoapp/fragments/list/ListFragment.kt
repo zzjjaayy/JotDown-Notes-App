@@ -167,10 +167,8 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun searchQueryInDb(query: String?) {
         val searchQuery = "%$query%"
-        sharedViewModel.searchDatabase(searchQuery).observe(this, { list ->
-            list?.let {
-                mAdapter.setData(it)
-            }
-        })
+        sharedViewModel.searchDatabase(searchQuery){
+            mAdapter.setData(it)
+        }
     }
 }
