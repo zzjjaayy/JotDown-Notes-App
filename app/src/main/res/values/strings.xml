@@ -14,4 +14,6 @@
     <string name="delete_all">Delete All</string>
     <string name="add_note">Add Note</string>
     <string name="delete_note">Delete Note</string>
+    <string name="oldest_first">Oldest First</string>
+    <string name="latest_first">Latest First</string>
 </resources>

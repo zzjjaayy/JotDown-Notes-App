@@ -29,6 +29,9 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
     private val repository : ToDoRepository
 
     private val _getAllData: LiveData<List<ToDoData>>
+    val getAllDataOldFirst : LiveData<List<ToDoData>>
+    val getDataByHighPriority : LiveData<List<ToDoData>>
+    val getDataByLowPriority : LiveData<List<ToDoData>>
 
     val isEmptyDb : MutableLiveData<Boolean> = MutableLiveData(false)
     fun checkIfDbEmpty(toDoData: List<ToDoData>) {
@@ -38,6 +41,9 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
     init {
         repository = ToDoRepository(toDoDao)
         _getAllData = repository.getAllData
+        getAllDataOldFirst = repository.getAllDataOldFirst
+        getDataByHighPriority = repository.getDataByHigh
+        getDataByLowPriority = repository.getDataByLow
     }
 
     val getAllData: LiveData<List<ToDoData>> = _getAllData

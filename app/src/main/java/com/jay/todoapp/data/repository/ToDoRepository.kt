@@ -8,6 +8,10 @@ import com.jay.todoapp.data.model.ToDoData
 // This is NOT an architectural component unlike Room DB but is recommended
 class ToDoRepository(private val toDoDao: ToDoDao) {
     val getAllData : LiveData<List<ToDoData>> = toDoDao.getAllData()
+    val getAllDataOldFirst : LiveData<List<ToDoData>> = toDoDao.getAllDataOldFirst()
+    val getDataByHigh : LiveData<List<ToDoData>> = toDoDao.sortByHigh()
+    val getDataByLow : LiveData<List<ToDoData>> = toDoDao.sortByLow()
+
     suspend fun insertData(toDoData: ToDoData) {
         toDoDao.insertToDoData(toDoData)
     }

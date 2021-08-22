@@ -2,7 +2,6 @@ package com.jay.todoapp.fragments.list
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.activity.addCallback
@@ -19,6 +18,7 @@ import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
+
 
 class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -125,8 +125,12 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(item.itemId == R.id.menu_delete_all) {
-            confirmRemoval()
+        when (item.itemId) {
+            R.id.menu_delete_all -> confirmRemoval()
+            R.id.menu_sort_new -> sharedViewModel.getAllData.observe(this, {mAdapter.setData(it)})
+            R.id.menu_sort_old -> sharedViewModel.getAllDataOldFirst.observe(this, {mAdapter.setData(it)})
+            R.id.menu_priority_high -> sharedViewModel.getDataByHighPriority.observe(this, {mAdapter.setData(it)})
+            R.id.menu_priority_low -> sharedViewModel.getDataByLowPriority.observe(this, {mAdapter.setData(it)})
         }
         return super.onOptionsItemSelected(item)
     }

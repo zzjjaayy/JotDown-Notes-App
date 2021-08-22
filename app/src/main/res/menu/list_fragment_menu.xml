@@ -17,6 +17,12 @@
             android:id="@+id/sort_by">
             <menu>
                 <item
+                    android:title="@string/latest_first"
+                    android:id="@+id/menu_sort_new" />
+                <item
+                    android:title="@string/oldest_first"
+                    android:id="@+id/menu_sort_old" />
+                <item
                     android:title="@string/high_priority"
                     android:id="@+id/menu_priority_high" />
                 <item
