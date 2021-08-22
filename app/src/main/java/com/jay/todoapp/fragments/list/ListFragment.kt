@@ -17,6 +17,7 @@ import com.jay.todoapp.R
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
+import com.jay.todoapp.utils.hideKeyboard
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
 
@@ -62,6 +63,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         }
         setUpRecyclerView()
         setHasOptionsMenu(true)
+        hideKeyboard(requireActivity())
     }
 
     private fun setUpRecyclerView() {
