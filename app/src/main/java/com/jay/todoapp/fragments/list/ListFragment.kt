@@ -2,28 +2,25 @@ package com.jay.todoapp.fragments.list
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
-import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.addCallback
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.jay.todoapp.R
-import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
-import jp.wasabeef.recyclerview.animators.LandingAnimator
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
-class ListFragment : Fragment() {
+class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private val sharedViewModel : ToDoViewModel by activityViewModels()
 
@@ -32,10 +29,18 @@ class ListFragment : Fragment() {
 
     private lateinit var mAdapter: ToDoAdapter
 
+    private lateinit var searchView : SearchView
+
     override fun onCreateView(
            inflater: LayoutInflater, container: ViewGroup?,
            savedInstanceState: Bundle?
        ): View? {
+            requireActivity().onBackPressedDispatcher.addCallback(this){
+                if(!searchView.isIconified) {
+                    searchView.isIconified = true
+                } else activity?.finish()
+            }
+
             // Inflate the layout for this fragment
             _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
             return binding.root
@@ -71,7 +76,7 @@ class ListFragment : Fragment() {
         }
         binding.notesListRecyclerView.adapter = mAdapter
         // these functions and properties belong to a third party library by "github/wasabeef"
-        binding.notesListRecyclerView.itemAnimator = LandingAnimator().apply{
+        binding.notesListRecyclerView.itemAnimator = SlideInUpAnimator().apply{
             addDuration = 300
         }
         swipeToDelete(binding.notesListRecyclerView)
@@ -112,6 +117,11 @@ class ListFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_fragment_menu, menu)
+
+        val search = menu.findItem(R.id.menu_search)
+        searchView = (search.actionView as? SearchView)!!
+        searchView.isSubmitButtonEnabled = true
+        searchView.setOnQueryTextListener(this)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -137,5 +147,30 @@ class ListFragment : Fragment() {
         alertDialogBuilder.setTitle("Delete all TODOs?")
         alertDialogBuilder.setMessage("Are you sure you want to delete all TODOs?")
         alertDialogBuilder.create().show()
+    }
+
+    // Triggered when you hit enter
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if(!query.isNullOrEmpty()) {
+           searchQueryInDb(query)
+        }
+        return true
+    }
+
+    // Triggered when you start typing
+    override fun onQueryTextChange(query: String?): Boolean {
+        if(!query.isNullOrEmpty()) {
+            searchQueryInDb(query)
+        }
+        return true
+    }
+
+    private fun searchQueryInDb(query: String?) {
+        val searchQuery = "%$query%"
+        sharedViewModel.searchDatabase(searchQuery).observe(this, { list ->
+            list?.let {
+                mAdapter.setData(it)
+            }
+        })
     }
 }
