@@ -122,6 +122,22 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         val search = menu.findItem(R.id.menu_search)
         searchView = (search.actionView as? SearchView)!!
         searchView.setOnQueryTextListener(this)
+
+        searchView.setOnSearchClickListener {
+            setItemsVisibility(menu, search, false)
+        }
+
+        searchView.setOnCloseListener {
+            setItemsVisibility(menu, search, true)
+            false
+        }
+    }
+
+    private fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            if (item !== exception) item.isVisible = visible
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
