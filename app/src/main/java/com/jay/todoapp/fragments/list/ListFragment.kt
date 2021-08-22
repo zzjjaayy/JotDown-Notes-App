@@ -93,7 +93,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                     sharedViewModel.parsedPriority(item.priority)
                 )
                 mAdapter.notifyItemRemoved(viewHolder.adapterPosition)
-                restoreDeletedItem(viewHolder.itemView, item, viewHolder.adapterPosition)
+                restoreDeletedItem(viewHolder.itemView, item)
             }
         }
 
@@ -101,7 +101,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun restoreDeletedItem(view: View, deletedItem: ToDoData, position: Int) {
+    private fun restoreDeletedItem(view: View, deletedItem: ToDoData) {
         val snackBar = Snackbar.make(
             view, "Deleted ${deletedItem.title}", Snackbar.LENGTH_LONG
         )
@@ -111,7 +111,6 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 deletedItem.description,
                 sharedViewModel.parsedPriority(deletedItem.priority)
             )
-            mAdapter.notifyItemChanged(position)
         }
         snackBar.show()
     }
