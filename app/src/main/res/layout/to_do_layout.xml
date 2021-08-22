@@ -29,14 +29,16 @@
 
         <TextView
             android:id="@+id/to_do_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:maxLength="20"
-            android:textColor="@color/light_gray"
-            android:textSize="24sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="20sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/priority_indicator"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sample TODO Title" />
@@ -51,6 +53,8 @@
             android:layout_marginEnd="16dp"
             android:maxLength="300"
             android:maxLines="10"
+            android:ellipsize="end"
+            android:textColor="@color/light_gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
