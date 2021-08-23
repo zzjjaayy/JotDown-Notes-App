@@ -35,6 +35,10 @@ class UpdateFragment : Fragment() {
     private lateinit var currentPriority: Priority
     private var currentId: Int? = null
 
+    /*
+    * LIFECYCLE FUNCTIONS
+    * */
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -91,6 +95,10 @@ class UpdateFragment : Fragment() {
         }
     }
 
+    /*
+    * MENU OPTION FUNCTIONS
+    * */
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.update_fragment_menu, menu)
     }
@@ -102,6 +110,10 @@ class UpdateFragment : Fragment() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    /*
+    * DELETION OF ITEM
+    * */
 
     private fun confirmItemRemoval() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
@@ -116,6 +128,13 @@ class UpdateFragment : Fragment() {
         alertDialogBuilder.create().show()
     }
 
+    private fun deleteItem() {
+        sharedViewModel.deleteSingleItemFromDb(currentId!!.toInt(), currentTitle, currentDesc, sharedViewModel.parsedPriority(currentPriority))
+    }
+
+    /*
+    * UPDATING ITEM
+    * */
     private fun updatingItem() {
         val toDoTitle : String = binding.currentEditTitleEditable.text.toString()
         val toDoDesc : String = binding.currentEditDescEditable.text.toString()
@@ -125,9 +144,5 @@ class UpdateFragment : Fragment() {
             Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_updateFragment_to_listFragment)
         }
-    }
-
-    private fun deleteItem() {
-        sharedViewModel.deleteSingleItemFromDb(currentId!!.toInt(), currentTitle, currentDesc, sharedViewModel.parsedPriority(currentPriority))
     }
 }

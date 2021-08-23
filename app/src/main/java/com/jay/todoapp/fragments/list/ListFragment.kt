@@ -23,15 +23,25 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
 class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
+    /*
+    * GLOBAL VARIABLES
+    * */
+    // ViewModel
     private val sharedViewModel : ToDoViewModel by activityViewModels()
 
+    // Binding
     private var _binding : FragmentListBinding? = null
     private val binding get() = _binding!!
 
+    // RecyclerView Adapter
     private lateinit var mAdapter: ToDoAdapter
 
+    // Search View
     private lateinit var searchView : SearchView
 
+    /*
+    * LIFECYCLE FUNCTIONS
+    * */
     override fun onCreateView(
            inflater: LayoutInflater, container: ViewGroup?,
            savedInstanceState: Bundle?
@@ -65,6 +75,15 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         setHasOptionsMenu(true)
         hideKeyboard(requireActivity())
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    /*
+    * RECYCLER VIEW & SWIPE FUNCTIONALITY
+    * */
 
     private fun setUpRecyclerView() {
         // setting an adapter to the recycler view
@@ -117,6 +136,10 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         snackBar.show()
     }
 
+    /*
+    * MENU FUNCTIONS
+    * */
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_fragment_menu, menu)
 
@@ -134,13 +157,6 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
-    private fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
-        for (i in 0 until menu.size()) {
-            val item = menu.getItem(i)
-            if (item !== exception) item.isVisible = visible
-        }
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_delete_all -> confirmRemoval()
@@ -150,11 +166,6 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             R.id.menu_priority_low -> sharedViewModel.getDataByLowPriority.observe(this, {mAdapter.setData(it)})
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     // Confirms the removal of all items with a dialog box
@@ -169,6 +180,10 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         alertDialogBuilder.setMessage("Are you sure you want to delete all TODOs?")
         alertDialogBuilder.create().show()
     }
+
+    /*
+    * SEARCH VIEW RELATED FUNCTIONS
+    * */
 
     // Triggered when you hit enter
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -190,6 +205,13 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         val searchQuery = "%$query%"
         sharedViewModel.searchDatabase(searchQuery){
             mAdapter.setData(it)
+        }
+    }
+
+    private fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            if (item !== exception) item.isVisible = visible
         }
     }
 }

@@ -80,8 +80,9 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
     /*
-    * FUNCTIONS FOR OTHER LOGIC
+    * FUNCTIONS TO BE ACCESSED BY FRAGMENTS TO ACCESS DB
     * */
 
     fun insertDataToDb(toDoTitle: String, toDoDesc: String, priorityLevel: String) : Boolean{
@@ -133,6 +134,10 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         )
         deleteSingleDataItem(itemToBeDeleted)
     }
+
+    /*
+    * VERIFICATION AND PARSING OF DATA
+    * */
 
     private fun verifyUserData(title: String, priority: String) : Boolean{
         return when {

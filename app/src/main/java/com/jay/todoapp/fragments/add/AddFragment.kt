@@ -20,6 +20,10 @@ class AddFragment : Fragment() {
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
 
+    /*
+    * LIFECYCLE FUNCTIONS
+    * */
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,6 +59,10 @@ class AddFragment : Fragment() {
             }
     }
 
+    /*
+    * MENU OPTION FUNCTIONS
+    * */
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.add_fragment_menu, menu)
     }
@@ -65,6 +73,10 @@ class AddFragment : Fragment() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    /*
+    * INSERTING DATA
+    * */
 
     private fun insertingNewData() {
         val toDoTitle : String = binding.editTitle.text.toString()
