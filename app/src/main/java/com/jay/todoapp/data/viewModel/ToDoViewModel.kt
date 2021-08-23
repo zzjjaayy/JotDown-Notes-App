@@ -29,6 +29,9 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
     private val repository : ToDoRepository
 
     private val _getAllData: LiveData<List<ToDoData>>
+    val getAllDataOldFirst : LiveData<List<ToDoData>>
+    val getDataByHighPriority : LiveData<List<ToDoData>>
+    val getDataByLowPriority : LiveData<List<ToDoData>>
 
     val isEmptyDb : MutableLiveData<Boolean> = MutableLiveData(false)
     fun checkIfDbEmpty(toDoData: List<ToDoData>) {
@@ -38,6 +41,9 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
     init {
         repository = ToDoRepository(toDoDao)
         _getAllData = repository.getAllData
+        getAllDataOldFirst = repository.getAllDataOldFirst
+        getDataByHighPriority = repository.getDataByHigh
+        getDataByLowPriority = repository.getDataByLow
     }
 
     val getAllData: LiveData<List<ToDoData>> = _getAllData
@@ -65,6 +71,15 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
             repository.deleteAllData()
         }
     }
+
+    fun searchDatabase(search : String, callbackResult: (List<ToDoData>) -> Unit){
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = repository.searchDatabase(search)
+            viewModelScope.launch(Dispatchers.Main) {
+                callbackResult(result)
+            }
+        }
+    }
     /*
     * FUNCTIONS FOR OTHER LOGIC
     * */
@@ -73,7 +88,21 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         return if(verifyUserData(toDoTitle, priorityLevel)) {
             val newData = ToDoData(
                 0, // This is set to auto increment so room will handle it
-                parsePriority(priorityLevel),
+                parseStringToPriority(priorityLevel),
+                toDoTitle,
+                toDoDesc
+            )
+            insertData(newData)
+            true
+        } else false
+    }
+
+    // This is for cases when a deleted item needs to be inserted again
+    fun insertDataToDb(toDoId: Int, toDoTitle: String, toDoDesc: String, priorityLevel: String) : Boolean{
+        return if(verifyUserData(toDoTitle, priorityLevel)) {
+            val newData = ToDoData(
+                toDoId,
+                parseStringToPriority(priorityLevel),
                 toDoTitle,
                 toDoDesc
             )
@@ -86,7 +115,7 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         return if(verifyUserData(toDoTitle, priorityLevel)) {
             val updatedData = ToDoData(
                 toDoId,
-                parsePriority(priorityLevel),
+                parseStringToPriority(priorityLevel),
                 toDoTitle,
                 toDoDesc
             )
@@ -98,7 +127,7 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteSingleItemFromDb(toDoId: Int, toDoTitle: String, toDoDesc: String, priorityLevel: String) {
         val itemToBeDeleted = ToDoData(
             toDoId,
-            parsePriority(priorityLevel),
+            parseStringToPriority(priorityLevel),
             toDoTitle,
             toDoDesc
         )
@@ -119,7 +148,7 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun parsePriority(priority: String) : Priority {
+    private fun parseStringToPriority(priority: String) : Priority {
         return when(priority) {
             "High" -> {
                 Priority.HIGH}
@@ -127,6 +156,14 @@ class ToDoViewModel(application: Application) : AndroidViewModel(application) {
                 Priority.MEDIUM}
             else -> {
                 Priority.LOW}
+        }
+    }
+
+    fun parsedPriority(priority: Priority) : String{
+        return when(priority) {
+            Priority.HIGH -> "High"
+            Priority.MEDIUM -> "Medium"
+            else -> "Low"
         }
     }
 
