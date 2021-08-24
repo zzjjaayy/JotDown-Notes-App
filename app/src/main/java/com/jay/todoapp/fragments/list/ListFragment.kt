@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -46,6 +47,8 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
            inflater: LayoutInflater, container: ViewGroup?,
            savedInstanceState: Bundle?
        ): View? {
+        (activity as AppCompatActivity?)!!.supportActionBar!!.show()
+
             requireActivity().onBackPressedDispatcher.addCallback(this){
                 if(!searchView.isIconified) {
                     searchView.setQuery("", true)
