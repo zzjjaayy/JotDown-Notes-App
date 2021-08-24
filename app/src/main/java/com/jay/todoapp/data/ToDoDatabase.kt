@@ -2,9 +2,12 @@ package com.jay.todoapp.data
 
 import android.content.Context
 import androidx.room.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 
-@Database(entities = [ToDoData::class], version = 1, exportSchema = false)
+@Database(entities = [ToDoData::class, ToDoArchive::class], version = 2, exportSchema = false)
 @TypeConverters(PriorityConverter::class) // This is to let Room know about the conversion
 abstract class ToDoDatabase : RoomDatabase(){
 
@@ -12,6 +15,12 @@ abstract class ToDoDatabase : RoomDatabase(){
 
     // A companion abject can be accessed directly through the class without a object instance of the class
     companion object {
+        val migration_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `todo_archive_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `oldId` INTEGER NOT NULL , `priority` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL)")
+            }
+        }
+
         // Volatile means writes to this field are immediately made visible to other threads
         @Volatile
         private var INSTANCE: ToDoDatabase? = null
@@ -29,7 +38,7 @@ abstract class ToDoDatabase : RoomDatabase(){
                     context.applicationContext,
                     ToDoDatabase::class.java,
                     "todo_database"
-                ).build()
+                ).addMigrations(migration_1_2).build()
                 INSTANCE = instance
                 return instance
             }
