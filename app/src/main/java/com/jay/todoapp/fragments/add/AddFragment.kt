@@ -9,13 +9,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.jay.todoapp.R
-import com.jay.todoapp.data.viewModel.ToDoViewModel
+import com.jay.todoapp.data.model.ToDoData
+import com.jay.todoapp.data.viewModel.ToDoDbViewModel
+import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.databinding.FragmentAddBinding
 
 
 class AddFragment : Fragment() {
 
-    private val sharedViewModel : ToDoViewModel by activityViewModels()
+    private val sharedViewModel : ToDoSharedViewModel by activityViewModels()
+    private val dbViewModel : ToDoDbViewModel by activityViewModels()
 
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
@@ -83,7 +86,14 @@ class AddFragment : Fragment() {
         val toDoDesc : String = binding.editDesc.text.toString()
         val priorityLevel : String = binding.autocompleteTextView.text.toString()
 
-        if(sharedViewModel.insertDataToDb(toDoTitle, toDoDesc, priorityLevel)) {
+        if(sharedViewModel.verifyUserData(toDoTitle, priorityLevel)) {
+            val newData = ToDoData(
+                0, // This is set to auto increment so room will handle it
+                sharedViewModel.parseStringToPriority(priorityLevel),
+                toDoTitle,
+                toDoDesc
+            )
+            dbViewModel.insertData(newData)
             Toast.makeText(context, "Successfully Added", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_addFragment_to_listFragment)
         }

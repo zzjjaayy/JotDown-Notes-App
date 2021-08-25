@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.jay.todoapp.data.viewModel.ToDoViewModel" />
+            type="com.jay.todoapp.data.viewModel.ToDoDbViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

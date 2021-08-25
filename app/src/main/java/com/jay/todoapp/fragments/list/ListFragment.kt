@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.jay.todoapp.R
 import com.jay.todoapp.data.model.ToDoData
-import com.jay.todoapp.data.viewModel.ToDoViewModel
+import com.jay.todoapp.data.viewModel.ToDoDbViewModel
+import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
+import com.jay.todoapp.utils.SwipeToDelete
 import com.jay.todoapp.utils.hideKeyboard
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
@@ -27,8 +29,9 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     /*
     * GLOBAL VARIABLES
     * */
-    // ViewModel
-    private val sharedViewModel : ToDoViewModel by activityViewModels()
+    // ViewModels
+    private val sharedViewModel : ToDoSharedViewModel by activityViewModels()
+    private val dbViewModel : ToDoDbViewModel by activityViewModels()
 
     // Binding
     private var _binding : FragmentListBinding? = null
@@ -66,11 +69,11 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         binding.apply {
             // Setting lifecycle owner so Data Binding can observe the LiveData
             lifecycleOwner = this@ListFragment
-            viewModel = sharedViewModel
+            viewModel = dbViewModel
 
             // This observer will change the isEmpty live data every time the data set is changed
-            sharedViewModel.getAllData.observe(viewLifecycleOwner, {
-                sharedViewModel.checkIfDbEmpty(it) // passing the new list to the checker
+            dbViewModel.getAllData.observe(viewLifecycleOwner, {
+                dbViewModel.checkIfDbEmpty(it) // passing the new list to the checker
                 mAdapter.setData(it)
             })
         }
@@ -111,16 +114,17 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         val swipeToDeleteCallback = object : SwipeToDelete() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = mAdapter.dataSet[viewHolder.adapterPosition]
-                sharedViewModel.deleteSingleItemFromDb(item.id,
+                val itemToBeDeleted = ToDoData(
+                    item.id,
+                    item.priority,
                     item.title,
-                    item.description,
-                    sharedViewModel.parsedPriority(item.priority)
+                    item.description
                 )
+                dbViewModel.deleteSingleDataItem(itemToBeDeleted)
                 mAdapter.notifyItemRemoved(viewHolder.adapterPosition)
                 restoreDeletedItem(viewHolder.itemView, item)
             }
         }
-
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
@@ -130,11 +134,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             view, "Deleted ${deletedItem.title}", Snackbar.LENGTH_LONG
         )
         snackBar.setAction("Undo"){
-            sharedViewModel.insertDataToDb(deletedItem.id,
-                deletedItem.title,
-                deletedItem.description,
-                sharedViewModel.parsedPriority(deletedItem.priority)
-            )
+            dbViewModel.insertData(deletedItem)
         }
         snackBar.show()
     }
@@ -163,10 +163,10 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_delete_all -> confirmRemoval()
-            R.id.menu_sort_new -> sharedViewModel.getAllData.observe(this, {mAdapter.setData(it)})
-            R.id.menu_sort_old -> sharedViewModel.getAllDataOldFirst.observe(this, {mAdapter.setData(it)})
-            R.id.menu_priority_high -> sharedViewModel.getDataByHighPriority.observe(this, {mAdapter.setData(it)})
-            R.id.menu_priority_low -> sharedViewModel.getDataByLowPriority.observe(this, {mAdapter.setData(it)})
+            R.id.menu_sort_new -> dbViewModel.getAllData.observe(this, {mAdapter.setData(it)})
+            R.id.menu_sort_old -> dbViewModel.getAllDataOldFirst.observe(this, {mAdapter.setData(it)})
+            R.id.menu_priority_high -> dbViewModel.getDataByHighPriority.observe(this, {mAdapter.setData(it)})
+            R.id.menu_priority_low -> dbViewModel.getDataByLowPriority.observe(this, {mAdapter.setData(it)})
         }
         return super.onOptionsItemSelected(item)
     }
@@ -175,7 +175,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun confirmRemoval() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
-            sharedViewModel.deleteAllData()
+            dbViewModel.deleteAllData()
             Toast.makeText(context, "Successfully Deleted All TODOs", Toast.LENGTH_SHORT).show()
         }
         alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
@@ -206,7 +206,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun searchQueryInDb(query: String?) {
         val searchQuery = "%$query%"
-        sharedViewModel.searchDatabase(searchQuery){
+        dbViewModel.searchDatabase(searchQuery){
             mAdapter.setData(it)
         }
     }

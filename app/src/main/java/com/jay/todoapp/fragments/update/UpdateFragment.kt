@@ -2,7 +2,6 @@ package com.jay.todoapp.fragments.update
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.renderscript.RenderScript
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -13,7 +12,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.jay.todoapp.R
 import com.jay.todoapp.data.model.Priority
-import com.jay.todoapp.data.viewModel.ToDoViewModel
+import com.jay.todoapp.data.model.ToDoData
+import com.jay.todoapp.data.viewModel.ToDoDbViewModel
+import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.databinding.FragmentUpdateBinding
 
 class UpdateFragment : Fragment() {
@@ -25,7 +26,8 @@ class UpdateFragment : Fragment() {
         var CURRENT_ID = "currentId"
     }
 
-    private val sharedViewModel : ToDoViewModel by activityViewModels()
+    private val sharedViewModel : ToDoSharedViewModel by activityViewModels()
+    private val dbViewModel : ToDoDbViewModel by activityViewModels()
 
     private var _binding: FragmentUpdateBinding? = null
     private val binding get() = _binding!!
@@ -129,7 +131,13 @@ class UpdateFragment : Fragment() {
     }
 
     private fun deleteItem() {
-        sharedViewModel.deleteSingleItemFromDb(currentId!!.toInt(), currentTitle, currentDesc, sharedViewModel.parsedPriority(currentPriority))
+        val itemToBeDeleted = ToDoData(
+            currentId!!.toInt(),
+            currentPriority,
+            currentTitle,
+            currentDesc
+        )
+        dbViewModel.deleteSingleDataItem(itemToBeDeleted)
     }
 
     /*
@@ -140,7 +148,11 @@ class UpdateFragment : Fragment() {
         val toDoDesc : String = binding.currentEditDescEditable.text.toString()
         val priorityLevel : String = binding.autocompleteTextView.text.toString()
 
-        if(sharedViewModel.updateDataToDb(currentId!!.toInt(), toDoTitle, toDoDesc, priorityLevel)) {
+        if(sharedViewModel.verifyUserData(toDoTitle, priorityLevel)) {
+            val itemToBeUpdated = ToDoData(
+                currentId!!.toInt(), sharedViewModel.parseStringToPriority(priorityLevel), toDoTitle, toDoDesc
+            )
+            dbViewModel.updateData(itemToBeUpdated)
             Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_updateFragment_to_listFragment)
         }

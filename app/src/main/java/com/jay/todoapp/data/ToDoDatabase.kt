@@ -15,7 +15,7 @@ abstract class ToDoDatabase : RoomDatabase(){
 
     // A companion abject can be accessed directly through the class without a object instance of the class
     companion object {
-        val migration_1_2 = object : Migration(1, 2) {
+        private val migration_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `todo_archive_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `oldId` INTEGER NOT NULL , `priority` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL)")
             }

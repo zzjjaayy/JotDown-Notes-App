@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jay.todoapp.R
 import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoData
+import com.jay.todoapp.utils.ToDoDiffUtil
 
 class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit) : RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder>(){
 
