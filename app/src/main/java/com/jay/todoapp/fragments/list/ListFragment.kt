@@ -56,7 +56,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 if(!searchView.isIconified) {
                     searchView.setQuery("", true)
                     searchView.isIconified = true
-                } else activity?.finish()
+                } else onStop()
             }
 
             // Inflate the layout for this fragment
@@ -70,13 +70,16 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             // Setting lifecycle owner so Data Binding can observe the LiveData
             lifecycleOwner = this@ListFragment
             viewModel = dbViewModel
-
-            // This observer will change the isEmpty live data every time the data set is changed
-            dbViewModel.getAllData.observe(viewLifecycleOwner, {
-                dbViewModel.checkIfDbEmpty(it) // passing the new list to the checker
-                mAdapter.setData(it)
-            })
+            floatingActionButton2.setOnClickListener {
+                findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
+            }
         }
+        // This observer will change the isEmpty live data every time the data set is changed
+        dbViewModel.getAllData.observe(viewLifecycleOwner, {
+            dbViewModel.checkIfDbEmpty(it) // passing the new list to the checker
+            mAdapter.setData(it)
+        })
+
         setUpRecyclerView()
         setHasOptionsMenu(true)
         hideKeyboard(requireActivity())

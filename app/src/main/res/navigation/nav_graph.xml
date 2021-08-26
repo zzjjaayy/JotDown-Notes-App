@@ -24,6 +24,9 @@
             app:exitAnim="@anim/to_right"
             app:popEnterAnim="@anim/from_right"
             app:popExitAnim="@anim/to_left" />
+        <action
+            android:id="@+id/action_listFragment_to_archiveFragment"
+            app:destination="@id/archiveFragment" />
     </fragment>
     <fragment
         android:id="@+id/addFragment"
@@ -62,6 +65,9 @@
         <argument
             android:name="currentId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_updateFragment_to_archiveFragment"
+            app:destination="@id/archiveFragment" />
     </fragment>
     <fragment
         android:id="@+id/viewPagerFragment"
@@ -89,5 +95,13 @@
             app:destination="@id/listFragment"
             app:popUpTo="@id/listFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/archiveFragment"
+        android:name="com.jay.todoapp.fragments.archive.ArchiveFragment"
+        android:label="ArchiveFragment" >
+        <action
+            android:id="@+id/action_archiveFragment_to_updateFragment"
+            app:destination="@id/updateFragment" />
     </fragment>
 </navigation>

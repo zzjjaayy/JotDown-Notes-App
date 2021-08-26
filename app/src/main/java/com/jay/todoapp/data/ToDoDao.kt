@@ -2,6 +2,7 @@ package com.jay.todoapp.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 
 // Dao stands for Data Access Object which holds all the functions mapping to various queries to the DB
@@ -36,4 +37,20 @@ interface ToDoDao {
 
     @Query("SELECT * FROM todo_table ORDER BY id DESC")
     fun getAllDataOldFirst() : LiveData<List<ToDoData>>
+
+    /*
+    * TODO ARCHIVE QUERIES
+    * */
+    @Query("SELECT * FROM todo_archive_table ORDER BY id ASC")
+    fun getAllArchive() : LiveData<List<ToDoArchive>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertToDoArchive(toDoArchive: ToDoArchive)
+
+    @Update
+    suspend fun updateToDoArchive(toDoArchive: ToDoArchive)
+
+    @Delete
+    suspend fun deleteToDoArchive(toDoArchive: ToDoArchive)
+
 }

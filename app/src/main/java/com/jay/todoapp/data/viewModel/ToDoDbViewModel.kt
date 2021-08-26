@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.jay.todoapp.R
 import com.jay.todoapp.data.ToDoDatabase
 import com.jay.todoapp.data.model.Priority
+import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.repository.ToDoRepository
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,9 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
     private val toDoDao = ToDoDatabase.getDatabase(application).toDoDao()
     private val repository : ToDoRepository
 
-    private val _getAllData: LiveData<List<ToDoData>>
+    val getAllData: LiveData<List<ToDoData>>
+    val getAllArchive : LiveData<List<ToDoArchive>>
+
     val getAllDataOldFirst : LiveData<List<ToDoData>>
     val getDataByHighPriority : LiveData<List<ToDoData>>
     val getDataByLowPriority : LiveData<List<ToDoData>>
@@ -40,13 +43,14 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
 
     init {
         repository = ToDoRepository(toDoDao)
-        _getAllData = repository.getAllData
+        getAllData = repository.getAllData
+        getAllArchive = repository.getAllArchive
+
+        // sorted lists for all data
         getAllDataOldFirst = repository.getAllDataOldFirst
         getDataByHighPriority = repository.getDataByHigh
         getDataByLowPriority = repository.getDataByLow
     }
-
-    val getAllData: LiveData<List<ToDoData>> = _getAllData
 
     fun insertData(toDoData: ToDoData) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -78,6 +82,27 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
             viewModelScope.launch(Dispatchers.Main) {
                 callbackResult(result)
             }
+        }
+    }
+
+    /*
+    * TODO ARCHIVE QUERIES
+    * */
+    fun insertArchive(toDoArchive: ToDoArchive) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.insertArchive(toDoArchive)
+        }
+    }
+
+    fun updateArchive(toDoArchive: ToDoArchive) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateArchive(toDoArchive)
+        }
+    }
+
+    fun deleteSingleArchive(toDoArchive: ToDoArchive) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteArchive(toDoArchive)
         }
     }
 
