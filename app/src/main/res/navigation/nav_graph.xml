@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/listFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/listFragment"
@@ -24,6 +24,9 @@
             app:exitAnim="@anim/to_right"
             app:popEnterAnim="@anim/from_right"
             app:popExitAnim="@anim/to_left" />
+        <action
+            android:id="@+id/action_listFragment_to_archiveFragment"
+            app:destination="@id/archiveFragment" />
     </fragment>
     <fragment
         android:id="@+id/addFragment"
@@ -62,5 +65,43 @@
         <argument
             android:name="currentId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_updateFragment_to_archiveFragment"
+            app:destination="@id/archiveFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/viewPagerFragment"
+        android:name="com.jay.todoapp.onboarding.ViewPagerFragment"
+        android:label="fragment_view_pager"
+        tools:layout="@layout/fragment_view_pager" >
+        <action
+            android:id="@+id/action_viewPagerFragment_to_listFragment"
+            app:destination="@id/listFragment"
+            app:popUpTo="@id/listFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.jay.todoapp.onboarding.splashScreen.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_viewPagerFragment"
+            app:destination="@id/viewPagerFragment"
+            app:popUpTo="@id/viewPagerFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_listFragment"
+            app:destination="@id/listFragment"
+            app:popUpTo="@id/listFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/archiveFragment"
+        android:name="com.jay.todoapp.fragments.archive.ArchiveFragment"
+        android:label="ArchiveFragment" >
+        <action
+            android:id="@+id/action_archiveFragment_to_updateFragment"
+            app:destination="@id/updateFragment" />
     </fragment>
 </navigation>

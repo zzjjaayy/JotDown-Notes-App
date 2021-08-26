@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.jay.todoapp.data.viewModel.ToDoViewModel" />
+            type="com.jay.todoapp.data.viewModel.ToDoDbViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -71,6 +71,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/no_data_image"
             app:emptyDatabase="@{viewModel.isEmptyDb()}" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="24dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_delete_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
