@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -54,11 +55,17 @@ class ArchiveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            floatingActionButton2.hide()
+            floatingActionButton.hide()
             lifecycleOwner = this@ArchiveFragment
             viewModel = dbViewModel
-            floatingActionButton.setImageResource(R.drawable.ic_arrow_back_24)
-            floatingActionButton.setOnClickListener {
+
+            extendedFab.setIconResource(R.drawable.ic_arrow_upward_24)
+            extendedFab.text = getString(R.string.all_notes)
+            // This is to change the constraints of the FAB
+            extendedFab.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                endToEnd = view.id
+            }
+            extendedFab.setOnClickListener {
                 findNavController().navigate(R.id.action_archiveFragment_to_listFragment)
             }
         }

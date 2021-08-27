@@ -28,6 +28,13 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
 class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
+    companion object {
+        var LATEST_SORT = "Latest First"
+        var OLDEST_SORT = "Oldest First"
+        var HIGH_SORT = "High to Low Priority"
+        var LOW_SORT = "Low to High Priority"
+    }
+
     /*
     * GLOBAL VARIABLES
     * */
@@ -72,10 +79,12 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             // Setting lifecycle owner so Data Binding can observe the LiveData
             lifecycleOwner = this@ListFragment
             viewModel = dbViewModel
+
+            sortStatus.text = getString(R.string.sort_template, LATEST_SORT)
             floatingActionButton.setOnClickListener {
                 findNavController().navigate(R.id.action_listFragment_to_addFragment)
             }
-            floatingActionButton2.setOnClickListener {
+            extendedFab.setOnClickListener {
                 findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
             }
         }
@@ -143,7 +152,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun restoreDeletedItem(view: View, deletedItem: ToDoData, archivedItem : ToDoArchive) {
         val snackBar = Snackbar.make(
-            view, "Archived ${deletedItem.title}", Snackbar.LENGTH_LONG
+            view, "Archived '${deletedItem.title}'", Snackbar.LENGTH_LONG
         )
         snackBar.setAction("Undo"){
             dbViewModel.insertData(deletedItem)
@@ -176,10 +185,22 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_delete_all -> confirmRemoval()
-            R.id.menu_sort_new -> dbViewModel.getAllData.observe(this, {mAdapter.setData(it)})
-            R.id.menu_sort_old -> dbViewModel.getAllDataOldFirst.observe(this, {mAdapter.setData(it)})
-            R.id.menu_priority_high -> dbViewModel.getDataByHighPriority.observe(this, {mAdapter.setData(it)})
-            R.id.menu_priority_low -> dbViewModel.getDataByLowPriority.observe(this, {mAdapter.setData(it)})
+            R.id.menu_sort_new -> {
+                dbViewModel.getAllData.observe(this, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template, LATEST_SORT)
+            }
+            R.id.menu_sort_old -> {
+                dbViewModel.getAllDataOldFirst.observe(this, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template, OLDEST_SORT)
+            }
+            R.id.menu_priority_high -> {
+                dbViewModel.getDataByHighPriority.observe(this, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template, HIGH_SORT)
+            }
+            R.id.menu_priority_low -> {
+                dbViewModel.getDataByLowPriority.observe(this, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template, LOW_SORT)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
