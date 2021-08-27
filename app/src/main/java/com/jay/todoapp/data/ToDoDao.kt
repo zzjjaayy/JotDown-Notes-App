@@ -50,7 +50,7 @@ interface ToDoDao {
     @Update
     suspend fun updateToDoArchive(toDoArchive: ToDoArchive)
 
-    @Delete
-    suspend fun deleteToDoArchive(toDoArchive: ToDoArchive)
+    @Query("DELETE FROM todo_archive_table WHERE oldId = :id")
+    suspend fun deleteToDoArchive(id: Int) : Int
 
 }

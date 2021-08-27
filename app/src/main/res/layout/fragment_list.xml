@@ -42,8 +42,7 @@
             android:src="@drawable/ic_add_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="@string/add_a_new_note"
-            app:navigateToAddFragment="@{true}"/>
+            android:contentDescription="@string/add_a_new_note" />
 
         <ImageView
             android:id="@+id/no_data_image"

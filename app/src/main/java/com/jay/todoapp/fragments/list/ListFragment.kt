@@ -18,7 +18,9 @@ import com.jay.todoapp.R
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoDbViewModel
 import com.jay.todoapp.ToDoSharedViewModel
+import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.databinding.FragmentListBinding
+import com.jay.todoapp.fragments.update.UpdateFragment
 import com.jay.todoapp.utils.SwipeToDelete
 import com.jay.todoapp.utils.hideKeyboard
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
@@ -56,7 +58,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 if(!searchView.isIconified) {
                     searchView.setQuery("", true)
                     searchView.isIconified = true
-                } else onStop()
+                } else activity?.finish()
             }
 
             // Inflate the layout for this fragment
@@ -70,6 +72,9 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             // Setting lifecycle owner so Data Binding can observe the LiveData
             lifecycleOwner = this@ListFragment
             viewModel = dbViewModel
+            floatingActionButton.setOnClickListener {
+                findNavController().navigate(R.id.action_listFragment_to_addFragment)
+            }
             floatingActionButton2.setOnClickListener {
                 findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
             }
@@ -101,7 +106,9 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 currentTitle = it.title,
                 currentDesc = it.description,
                 currentPriority = it.priority.name,
-                currentId = it.id
+                currentId = it.id,
+                returnDestination = "List",
+                currentOldId = -1
             )
             findNavController().navigate(action)
         }
@@ -117,27 +124,30 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         val swipeToDeleteCallback = object : SwipeToDelete() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = mAdapter.dataSet[viewHolder.adapterPosition]
-                val itemToBeDeleted = ToDoData(
+                val itemToBeArchived = ToDoArchive(
+                    0,
                     item.id,
                     item.priority,
                     item.title,
                     item.description
                 )
-                dbViewModel.deleteSingleDataItem(itemToBeDeleted)
-                mAdapter.notifyItemRemoved(viewHolder.adapterPosition)
-                restoreDeletedItem(viewHolder.itemView, item)
+                dbViewModel.insertArchive(itemToBeArchived)
+                dbViewModel.deleteSingleDataItem(item)
+//                mAdapter.notifyItemRemoved(viewHolder.adapterPosition)
+                restoreDeletedItem(viewHolder.itemView, item, itemToBeArchived)
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
-    private fun restoreDeletedItem(view: View, deletedItem: ToDoData) {
+    private fun restoreDeletedItem(view: View, deletedItem: ToDoData, archivedItem : ToDoArchive) {
         val snackBar = Snackbar.make(
-            view, "Deleted ${deletedItem.title}", Snackbar.LENGTH_LONG
+            view, "Archived ${deletedItem.title}", Snackbar.LENGTH_LONG
         )
         snackBar.setAction("Undo"){
             dbViewModel.insertData(deletedItem)
+            dbViewModel.deleteSingleArchive(archivedItem)
         }
         snackBar.show()
     }

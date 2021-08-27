@@ -1,5 +1,6 @@
 package com.jay.todoapp.data.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.jay.todoapp.data.ToDoDao
 import com.jay.todoapp.data.model.ToDoArchive
@@ -34,7 +35,13 @@ class ToDoRepository(private val toDoDao: ToDoDao) {
     * */
 
     val getAllArchive : LiveData<List<ToDoArchive>> = toDoDao.getAllArchive()
-    suspend fun insertArchive(toDoArchive: ToDoArchive) = toDoDao.insertToDoArchive(toDoArchive)
-    suspend fun updateArchive(toDoArchive: ToDoArchive) = toDoDao.updateToDoArchive(toDoArchive)
-    suspend fun deleteArchive(toDoArchive: ToDoArchive) = toDoDao.deleteToDoArchive(toDoArchive)
+    suspend fun insertArchive(toDoArchive: ToDoArchive){
+        toDoDao.insertToDoArchive(toDoArchive)
+    }
+    suspend fun updateArchive(toDoArchive: ToDoArchive) {
+        toDoDao.updateToDoArchive(toDoArchive)
+    }
+    suspend fun deleteArchive(toDoArchive: ToDoArchive) {
+        toDoDao.deleteToDoArchive(toDoArchive.oldId)
+    }
 }
