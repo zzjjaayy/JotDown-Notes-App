@@ -26,8 +26,8 @@ class ToDoRepository(private val toDoDao: ToDoDao) {
     suspend fun deleteAllData() {
         toDoDao.deleteAllToDoData()
     }
-    fun searchDatabase(search : String) : List<ToDoData>{
-        return toDoDao.searchDb(search)
+    fun searchAllData(search : String) : List<ToDoData>{
+        return toDoDao.searchAllData(search)
     }
 
     /*
@@ -35,6 +35,10 @@ class ToDoRepository(private val toDoDao: ToDoDao) {
     * */
 
     val getAllArchive : LiveData<List<ToDoArchive>> = toDoDao.getAllArchive()
+    val getArchiveOldFirst : LiveData<List<ToDoArchive>> = toDoDao.getArchiveOldFirst()
+    val getArchiveByHigh : LiveData<List<ToDoArchive>> = toDoDao.sortArchiveByHigh()
+    val getArchiveByLow : LiveData<List<ToDoArchive>> = toDoDao.sortArchiveByLow()
+
     suspend fun insertArchive(toDoArchive: ToDoArchive){
         toDoDao.insertToDoArchive(toDoArchive)
     }
@@ -43,5 +47,8 @@ class ToDoRepository(private val toDoDao: ToDoDao) {
     }
     suspend fun deleteArchive(toDoArchive: ToDoArchive) {
         toDoDao.deleteToDoArchive(toDoArchive.oldId)
+    }
+    fun searchAllArchive(search : String) : List<ToDoArchive>{
+        return toDoDao.searchAllArchive(search)
     }
 }

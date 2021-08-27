@@ -132,7 +132,7 @@ class UpdateFragment : Fragment() {
         }
         alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
         alertDialogBuilder.setTitle("Delete this Todo?")
-        alertDialogBuilder.setMessage("Are you sure you want to delete \"$currentTitle\"?")
+        alertDialogBuilder.setMessage("Caution : This is an irreversible action")
         alertDialogBuilder.create().show()
     }
 

@@ -32,9 +32,15 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
     val getAllData: LiveData<List<ToDoData>>
     val getAllArchive : LiveData<List<ToDoArchive>>
 
+    // sorted lists for all data
     val getAllDataOldFirst : LiveData<List<ToDoData>>
     val getDataByHighPriority : LiveData<List<ToDoData>>
     val getDataByLowPriority : LiveData<List<ToDoData>>
+
+    // sorted lists for archive
+    val getAllArchiveOldFirst : LiveData<List<ToDoArchive>>
+    val getArchiveByHighPriority : LiveData<List<ToDoArchive>>
+    val getArchiveByLowPriority : LiveData<List<ToDoArchive>>
 
     val isEmptyDb : MutableLiveData<Boolean> = MutableLiveData(false)
     fun checkIfDbEmpty(toDoData: List<ToDoData>) {
@@ -50,6 +56,11 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
         getAllDataOldFirst = repository.getAllDataOldFirst
         getDataByHighPriority = repository.getDataByHigh
         getDataByLowPriority = repository.getDataByLow
+
+        // sorted lists for archive
+        getAllArchiveOldFirst = repository.getArchiveOldFirst
+        getArchiveByHighPriority = repository.getArchiveByHigh
+        getArchiveByLowPriority = repository.getArchiveByLow
     }
 
     fun insertData(toDoData: ToDoData) {
@@ -76,9 +87,9 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun searchDatabase(search : String, callbackResult: (List<ToDoData>) -> Unit){
+    fun searchAllData(search : String, callbackResult: (List<ToDoData>) -> Unit){
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.searchDatabase(search)
+            val result = repository.searchAllData(search)
             viewModelScope.launch(Dispatchers.Main) {
                 callbackResult(result)
             }
@@ -106,4 +117,12 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun searchAllArchive(search : String, callbackResult: (List<ToDoArchive>) -> Unit){
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = repository.searchAllArchive(search)
+            viewModelScope.launch(Dispatchers.Main) {
+                callbackResult(result)
+            }
+        }
+    }
 }

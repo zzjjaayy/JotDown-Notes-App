@@ -1,12 +1,13 @@
 package com.jay.todoapp.fragments.archive
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
@@ -21,6 +22,7 @@ import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoDbViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
+import com.jay.todoapp.fragments.list.ListFragment
 import com.jay.todoapp.fragments.list.ListFragmentDirections
 import com.jay.todoapp.fragments.list.ToDoAdapter
 import com.jay.todoapp.fragments.update.UpdateFragment
@@ -28,7 +30,7 @@ import com.jay.todoapp.utils.SwipeToDelete
 import com.jay.todoapp.utils.hideKeyboard
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
-class ArchiveFragment : Fragment() {
+class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private val sharedViewModel : ToDoSharedViewModel by activityViewModels()
     private val dbViewModel : ToDoDbViewModel by activityViewModels()
@@ -40,12 +42,19 @@ class ArchiveFragment : Fragment() {
     // RecyclerView Adapter
     private lateinit var mAdapter: ArchiveAdapter
 
+    // Search View
+    private lateinit var searchView : SearchView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         requireActivity().onBackPressedDispatcher.addCallback(this){
-            findNavController().navigate(R.id.action_archiveFragment_to_listFragment)
+            if(!searchView.isIconified) {
+                searchView.setQuery("", true)
+                searchView.isIconified = true
+                binding.sortStatus.visibility = View.VISIBLE
+            } else findNavController().navigate(R.id.action_archiveFragment_to_listFragment)
         }
         // Inflate the layout for this fragment
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
@@ -59,6 +68,7 @@ class ArchiveFragment : Fragment() {
             lifecycleOwner = this@ArchiveFragment
             viewModel = dbViewModel
 
+            sortStatus.text = getString(R.string.sort_template, ListFragment.LATEST_SORT)
             extendedFab.setIconResource(R.drawable.ic_arrow_upward_24)
             extendedFab.text = getString(R.string.all_notes)
             // This is to change the constraints of the FAB
@@ -66,6 +76,11 @@ class ArchiveFragment : Fragment() {
                 endToEnd = view.id
             }
             extendedFab.setOnClickListener {
+                if(!searchView.isIconified) {
+                    searchView.setQuery("", true)
+                    searchView.isIconified = true
+                    binding.sortStatus.visibility = View.VISIBLE
+                }
                 findNavController().navigate(R.id.action_archiveFragment_to_listFragment)
             }
         }
@@ -74,6 +89,7 @@ class ArchiveFragment : Fragment() {
             mAdapter.setData(it)
         })
         setUpRecyclerView()
+        setHasOptionsMenu(true)
         hideKeyboard(requireActivity())
     }
 
@@ -123,5 +139,89 @@ class ArchiveFragment : Fragment() {
         }
         val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    /*
+    * MENU OPTIONS
+    * */
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.list_fragment_menu, menu)
+
+        menu.findItem(R.id.menu_delete_all).isVisible = false
+
+        val search = menu.findItem(R.id.menu_search)
+        searchView = (search.actionView as? SearchView)!!
+        searchView.setOnQueryTextListener(this)
+
+        searchView.setOnSearchClickListener {
+            binding.sortStatus.visibility = View.GONE
+            setItemsVisibility(menu, search, false)
+        }
+        searchView.setOnCloseListener {
+            binding.sortStatus.visibility = View.VISIBLE
+            setItemsVisibility(menu, search, true)
+            false
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_sort_new -> {
+                dbViewModel.getAllArchive.observe(this, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template,
+                    ListFragment.LATEST_SORT
+                )
+            }
+            R.id.menu_sort_old -> {
+                dbViewModel.getAllArchiveOldFirst.observe(this, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template,
+                    ListFragment.OLDEST_SORT
+                )
+            }
+            R.id.menu_priority_high -> {
+                dbViewModel.getArchiveByHighPriority.observe(this, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template, ListFragment.HIGH_SORT)
+            }
+            R.id.menu_priority_low -> {
+                dbViewModel.getArchiveByLowPriority.observe(this, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template, ListFragment.LOW_SORT)
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    /*
+    * SEARCH VIEW RELATED FUNCTIONS
+    * */
+
+    // Triggered when you hit enter
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if(query != null) {
+            searchQueryInDb(query)
+        }
+        return true
+    }
+
+    // Triggered when you start typing
+    override fun onQueryTextChange(query: String?): Boolean {
+        if(query != null) {
+            searchQueryInDb(query)
+        }
+        return true
+    }
+
+    private fun searchQueryInDb(query: String?) {
+        val searchQuery = "%$query%"
+        dbViewModel.searchAllArchive(searchQuery){
+            mAdapter.setData(it)
+        }
+    }
+
+    private fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            if (item !== exception) item.isVisible = visible
+        }
     }
 }

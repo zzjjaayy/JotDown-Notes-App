@@ -1,6 +1,7 @@
 package com.jay.todoapp.fragments.list
 
 import android.app.AlertDialog
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
@@ -59,12 +60,13 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
            inflater: LayoutInflater, container: ViewGroup?,
            savedInstanceState: Bundle?
        ): View? {
-        (activity as AppCompatActivity?)!!.supportActionBar!!.show()
+            (activity as AppCompatActivity?)!!.supportActionBar!!.show()
 
             requireActivity().onBackPressedDispatcher.addCallback(this){
                 if(!searchView.isIconified) {
                     searchView.setQuery("", true)
                     searchView.isIconified = true
+                    binding.sortStatus.visibility = View.VISIBLE
                 } else activity?.finish()
             }
 
@@ -85,6 +87,11 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 findNavController().navigate(R.id.action_listFragment_to_addFragment)
             }
             extendedFab.setOnClickListener {
+                if(!searchView.isIconified) {
+                    searchView.setQuery("", true)
+                    searchView.isIconified = true
+                    binding.sortStatus.visibility = View.VISIBLE
+                }
                 findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
             }
         }
@@ -173,10 +180,12 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         searchView.setOnQueryTextListener(this)
 
         searchView.setOnSearchClickListener {
+            binding.sortStatus.visibility = View.GONE
             setItemsVisibility(menu, search, false)
         }
 
         searchView.setOnCloseListener {
+            binding.sortStatus.visibility = View.INVISIBLE
             setItemsVisibility(menu, search, true)
             false
         }
@@ -214,7 +223,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         }
         alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
         alertDialogBuilder.setTitle("Delete all TODOs?")
-        alertDialogBuilder.setMessage("Are you sure you want to delete all TODOs?")
+        alertDialogBuilder.setMessage("Caution : This is an irreversible action")
         alertDialogBuilder.create().show()
     }
 
@@ -240,7 +249,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun searchQueryInDb(query: String?) {
         val searchQuery = "%$query%"
-        dbViewModel.searchDatabase(searchQuery){
+        dbViewModel.searchAllData(searchQuery){
             mAdapter.setData(it)
         }
     }
