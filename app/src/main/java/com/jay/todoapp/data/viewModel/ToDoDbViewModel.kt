@@ -1,19 +1,11 @@
 package com.jay.todoapp.data.viewModel
 
 import android.app.Application
-import android.util.Log
-import android.view.View
-import android.widget.AdapterView
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.jay.todoapp.R
 import com.jay.todoapp.data.ToDoDatabase
-import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.repository.ToDoRepository
@@ -33,12 +25,12 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
     val getAllArchive : LiveData<List<ToDoArchive>>
 
     // sorted lists for all data
-    val getAllDataOldFirst : LiveData<List<ToDoData>>
+    val getAllDataNewFirst : LiveData<List<ToDoData>>
     val getDataByHighPriority : LiveData<List<ToDoData>>
     val getDataByLowPriority : LiveData<List<ToDoData>>
 
     // sorted lists for archive
-    val getAllArchiveOldFirst : LiveData<List<ToDoArchive>>
+    val getAllArchiveNewFirst : LiveData<List<ToDoArchive>>
     val getArchiveByHighPriority : LiveData<List<ToDoArchive>>
     val getArchiveByLowPriority : LiveData<List<ToDoArchive>>
 
@@ -53,12 +45,12 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
         getAllArchive = repository.getAllArchive
 
         // sorted lists for all data
-        getAllDataOldFirst = repository.getAllDataOldFirst
+        getAllDataNewFirst = repository.getAllDataNewFirst
         getDataByHighPriority = repository.getDataByHigh
         getDataByLowPriority = repository.getDataByLow
 
         // sorted lists for archive
-        getAllArchiveOldFirst = repository.getArchiveOldFirst
+        getAllArchiveNewFirst = repository.getArchiveNewFirst
         getArchiveByHighPriority = repository.getArchiveByHigh
         getArchiveByLowPriority = repository.getArchiveByLow
     }

@@ -1,6 +1,7 @@
 package com.jay.todoapp.fragments.archive
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -43,6 +44,9 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
     // Search View
     private lateinit var searchView : SearchView
 
+    // This is to keep record of the present sorting option in dialog box
+    private var selectedItem : Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,6 +71,9 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
             viewModel = dbViewModel
 
             sortStatus.text = getString(R.string.sort_template, ListFragment.LATEST_SORT)
+            sortStatus.setOnClickListener{
+                changeSorting()
+            }
             extendedFab.setIconResource(R.drawable.ic_arrow_upward_24)
             extendedFab.text = getString(R.string.all_notes)
             // This is to change the constraints of the FAB
@@ -186,6 +193,51 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
+    private fun changeSorting(){
+        val options = arrayOf(
+            ListFragment.LATEST_SORT,
+            ListFragment.OLDEST_SORT,
+            ListFragment.HIGH_SORT,
+            ListFragment.LOW_SORT
+        )
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select a sorting option")
+        builder.setSingleChoiceItems(options, selectedItem) { dialogInterface: DialogInterface, item: Int ->
+            selectedItem = item
+        }
+        builder.setPositiveButton("Sort") { dialogInterface: DialogInterface, p1: Int ->
+            when(selectedItem) {
+                0 -> {
+                dbViewModel.getAllArchive.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                binding.sortStatus.text = getString(R.string.sort_template,
+                    ListFragment.LATEST_SORT
+                )
+            }
+                1 -> {
+                    dbViewModel.getAllArchiveNewFirst.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    binding.sortStatus.text = getString(R.string.sort_template,
+                        ListFragment.OLDEST_SORT
+                    )
+                }
+                2 -> {
+                    dbViewModel.getArchiveByHighPriority.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    binding.sortStatus.text = getString(R.string.sort_template,
+                        ListFragment.HIGH_SORT
+                    )
+                }
+                3 -> {
+                    dbViewModel.getArchiveByLowPriority.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    binding.sortStatus.text = getString(R.string.sort_template,
+                        ListFragment.LOW_SORT
+                    )
+                }
+            }
+            dialogInterface.dismiss()
+        }
+        builder.create()
+        builder.show();
+    }
+
     /*
     * MENU OPTIONS
     * */
@@ -208,32 +260,6 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
             setItemsVisibility(menu, search, true)
             false
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_sort_new -> {
-                dbViewModel.getAllArchive.observe(this, { mAdapter.setData(it) })
-                binding.sortStatus.text = getString(R.string.sort_template,
-                    ListFragment.LATEST_SORT
-                )
-            }
-            R.id.menu_sort_old -> {
-                dbViewModel.getAllArchiveOldFirst.observe(this, { mAdapter.setData(it) })
-                binding.sortStatus.text = getString(R.string.sort_template,
-                    ListFragment.OLDEST_SORT
-                )
-            }
-            R.id.menu_priority_high -> {
-                dbViewModel.getArchiveByHighPriority.observe(this, { mAdapter.setData(it) })
-                binding.sortStatus.text = getString(R.string.sort_template, ListFragment.HIGH_SORT)
-            }
-            R.id.menu_priority_low -> {
-                dbViewModel.getArchiveByLowPriority.observe(this, { mAdapter.setData(it) })
-                binding.sortStatus.text = getString(R.string.sort_template, ListFragment.LOW_SORT)
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     /*

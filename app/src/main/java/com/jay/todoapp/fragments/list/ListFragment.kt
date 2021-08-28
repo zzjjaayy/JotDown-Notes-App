@@ -1,6 +1,7 @@
 package com.jay.todoapp.fragments.list
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -53,6 +54,9 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     // Search View
     private lateinit var searchView : SearchView
 
+    // This is to keep record of the present sorting option in dialog box
+    private var selectedItem : Int = 0
+
     /*
     * LIFECYCLE FUNCTIONS
     * */
@@ -83,6 +87,9 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             viewModel = dbViewModel
 
             sortStatus.text = getString(R.string.sort_template, LATEST_SORT)
+            sortStatus.setOnClickListener {
+                changeSorting()
+            }
             floatingActionButton.setOnClickListener {
                 findNavController().navigate(R.id.action_listFragment_to_addFragment)
             }
@@ -241,26 +248,40 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_delete_all -> confirmRemoval()
-            R.id.menu_sort_new -> {
-                dbViewModel.getAllData.observe(this, { mAdapter.setData(it) })
-                binding.sortStatus.text = getString(R.string.sort_template, LATEST_SORT)
-            }
-            R.id.menu_sort_old -> {
-                dbViewModel.getAllDataOldFirst.observe(this, { mAdapter.setData(it) })
-                binding.sortStatus.text = getString(R.string.sort_template, OLDEST_SORT)
-            }
-            R.id.menu_priority_high -> {
-                dbViewModel.getDataByHighPriority.observe(this, { mAdapter.setData(it) })
-                binding.sortStatus.text = getString(R.string.sort_template, HIGH_SORT)
-            }
-            R.id.menu_priority_low -> {
-                dbViewModel.getDataByLowPriority.observe(this, { mAdapter.setData(it) })
-                binding.sortStatus.text = getString(R.string.sort_template, LOW_SORT)
-            }
-        }
+        if (item.itemId == R.id.menu_delete_all) confirmRemoval()
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun changeSorting(){
+        val options = arrayOf(LATEST_SORT, OLDEST_SORT, HIGH_SORT, LOW_SORT)
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select a sorting option")
+        builder.setSingleChoiceItems(options, selectedItem) { dialogInterface: DialogInterface, item: Int ->
+            selectedItem = item
+        }
+        builder.setPositiveButton("Sort") { dialogInterface: DialogInterface, p1: Int ->
+            when(selectedItem) {
+                0 -> {
+                    dbViewModel.getAllData.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    binding.sortStatus.text = getString(R.string.sort_template, LATEST_SORT)
+                }
+                1 -> {
+                    dbViewModel.getAllDataNewFirst.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    binding.sortStatus.text = getString(R.string.sort_template, OLDEST_SORT)
+                }
+                2 -> {
+                    dbViewModel.getDataByHighPriority.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    binding.sortStatus.text = getString(R.string.sort_template, HIGH_SORT)
+                }
+                3 -> {
+                    dbViewModel.getDataByLowPriority.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    binding.sortStatus.text = getString(R.string.sort_template, LOW_SORT)
+                }
+            }
+            dialogInterface.dismiss()
+        }
+        builder.create()
+        builder.show();
     }
 
     // Confirms the removal of all items with a dialog box

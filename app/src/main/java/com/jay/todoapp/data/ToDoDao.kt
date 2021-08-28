@@ -36,7 +36,7 @@ interface ToDoDao {
     fun sortByLow() : LiveData<List<ToDoData>>
 
     @Query("SELECT * FROM todo_table ORDER BY id DESC")
-    fun getAllDataOldFirst() : LiveData<List<ToDoData>>
+    fun getAllDataNewestFirst() : LiveData<List<ToDoData>>
 
     /*
     * TODO ARCHIVE QUERIES
@@ -60,7 +60,7 @@ interface ToDoDao {
     fun sortArchiveByLow() : LiveData<List<ToDoArchive>>
 
     @Query("SELECT * FROM todo_archive_table ORDER BY id DESC")
-    fun getArchiveOldFirst() : LiveData<List<ToDoArchive>>
+    fun getArchiveNewFirst() : LiveData<List<ToDoArchive>>
 
     @Query("SELECT * FROM todo_archive_table WHERE title LIKE :search OR description LIKE :search")
     fun searchAllArchive(search: String) : List<ToDoArchive>

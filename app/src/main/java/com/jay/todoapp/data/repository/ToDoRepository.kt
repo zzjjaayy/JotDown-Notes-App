@@ -1,6 +1,5 @@
 package com.jay.todoapp.data.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.jay.todoapp.data.ToDoDao
 import com.jay.todoapp.data.model.ToDoArchive
@@ -10,7 +9,7 @@ import com.jay.todoapp.data.model.ToDoData
 // This is NOT an architectural component unlike Room DB but is recommended
 class ToDoRepository(private val toDoDao: ToDoDao) {
     val getAllData : LiveData<List<ToDoData>> = toDoDao.getAllData()
-    val getAllDataOldFirst : LiveData<List<ToDoData>> = toDoDao.getAllDataOldFirst()
+    val getAllDataNewFirst : LiveData<List<ToDoData>> = toDoDao.getAllDataNewestFirst()
     val getDataByHigh : LiveData<List<ToDoData>> = toDoDao.sortByHigh()
     val getDataByLow : LiveData<List<ToDoData>> = toDoDao.sortByLow()
 
@@ -35,7 +34,7 @@ class ToDoRepository(private val toDoDao: ToDoDao) {
     * */
 
     val getAllArchive : LiveData<List<ToDoArchive>> = toDoDao.getAllArchive()
-    val getArchiveOldFirst : LiveData<List<ToDoArchive>> = toDoDao.getArchiveOldFirst()
+    val getArchiveNewFirst : LiveData<List<ToDoArchive>> = toDoDao.getArchiveNewFirst()
     val getArchiveByHigh : LiveData<List<ToDoArchive>> = toDoDao.sortArchiveByHigh()
     val getArchiveByLow : LiveData<List<ToDoArchive>> = toDoDao.sortArchiveByLow()
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/sort_option_dialog_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Sort Your Notes"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/sortChooseGroup"
+        android:checkedButton="@+id/radio_button_1"
+        app:layout_constraintTop_toBottomOf="@id/sort_option_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+        <RadioButton
+            android:id="@+id/sort_btn_latest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="Latest"/>
+        <RadioButton
+            android:id="@+id/sort_btn_oldest"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="Latest"/>
+        <RadioButton
+            android:id="@+id/sort_btn_high"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="Latest"/>
+        <RadioButton
+            android:id="@+id/sort_btn_low"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:text="Latest"/>
+    </RadioGroup>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

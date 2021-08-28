@@ -16,17 +16,18 @@
         android:id="@+id/list_layout"
         tools:context=".fragments.list.ListFragment">
 
-        <TextView
+        <com.google.android.material.chip.Chip
             android:id="@+id/sort_status"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="Sort Status"
-            android:textStyle="italic"
+            app:chipStartPadding="15dp"
+            app:chipIcon="@drawable/ic_action_name"
+            app:chipBackgroundColor="@color/teal_200"
+            android:textColor="@color/black"
+            tools:text="Sort : Status"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="8dp"
-            android:layout_marginStart="8dp"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/notesListRecyclerView"
