@@ -1,9 +1,10 @@
 package com.jay.todoapp.fragments.list
 
 import android.app.AlertDialog
-import android.opengl.Visibility
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -16,13 +17,12 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.jay.todoapp.R
-import com.jay.todoapp.data.model.ToDoData
-import com.jay.todoapp.data.viewModel.ToDoDbViewModel
 import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.data.model.ToDoArchive
+import com.jay.todoapp.data.model.ToDoData
+import com.jay.todoapp.data.viewModel.ToDoDbViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
-import com.jay.todoapp.fragments.update.UpdateFragment
-import com.jay.todoapp.utils.SwipeToDelete
+import com.jay.todoapp.utils.SwipeToArchive
 import com.jay.todoapp.utils.hideKeyboard
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
@@ -117,27 +117,79 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun setUpRecyclerView() {
         // setting an adapter to the recycler view
-        mAdapter = ToDoAdapter {
-            val action = ListFragmentDirections.actionListFragmentToUpdateFragment(
-                currentTitle = it.title,
-                currentDesc = it.description,
-                currentPriority = it.priority.name,
-                currentId = it.id,
-                returnDestination = "List",
-                currentOldId = -1
-            )
-            findNavController().navigate(action)
-        }
+        mAdapter = ToDoAdapter ({
+            updateShortcut(it)
+        }, { data, view ->
+            val popup = PopupMenu(requireContext(), view)
+            popup.menuInflater.inflate(R.menu.item_long_press_menu, popup.menu)
+            popup.menu.findItem(R.id.menu_press_unarchive).isVisible = false
+
+            try {
+                val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                fieldMPopup.isAccessible = true
+                val mPopup = fieldMPopup.get(popup)
+                mPopup.javaClass
+                    .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                    .invoke(mPopup, true)
+            } catch (e: Exception){
+                Log.e("Main", "Error showing menu icons.", e)
+            } finally {
+                popup.show()
+            }
+
+            popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+                when(menuItem.itemId){
+                    R.id.menu_press_update -> updateShortcut(data)
+                    R.id.menu_press_delete -> deleteShortcut(data)
+                    R.id.menu_press_archive -> {
+                        archiveShortcut(view, data, ToDoArchive(
+                            0, data.id, data.priority, data.title, data.description
+                        ))
+                    }
+                }
+                true
+            }
+        })
         binding.notesListRecyclerView.adapter = mAdapter
         // these functions and properties belong to a third party library by "github/wasabeef"
         binding.notesListRecyclerView.itemAnimator = SlideInUpAnimator().apply{
             addDuration = 300
         }
-        swipeToDelete(binding.notesListRecyclerView)
+        swipeToArchive(binding.notesListRecyclerView)
     }
 
-    private fun swipeToDelete(recyclerView: RecyclerView) {
-        val swipeToDeleteCallback = object : SwipeToDelete() {
+    private fun updateShortcut(it : ToDoData) {
+        val action = ListFragmentDirections.actionListFragmentToUpdateFragment(
+            currentTitle = it.title,
+            currentDesc = it.description,
+            currentPriority = it.priority.name,
+            currentId = it.id,
+            returnDestination = "List",
+            currentOldId = -1
+        )
+        findNavController().navigate(action)
+    }
+
+    private fun deleteShortcut(toDoData: ToDoData) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+            dbViewModel.deleteSingleDataItem(toDoData)
+            Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show()
+        }
+        alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
+        alertDialogBuilder.setTitle("Delete this Todo?")
+        alertDialogBuilder.setMessage("Caution : This is an irreversible action")
+        alertDialogBuilder.create().show()
+    }
+
+    private fun archiveShortcut(view: View, item: ToDoData, itemToBeArchived: ToDoArchive) {
+        dbViewModel.insertArchive(itemToBeArchived)
+        dbViewModel.deleteSingleDataItem(item)
+        restoreDeletedItem(view, item, itemToBeArchived)
+    }
+
+    private fun swipeToArchive(recyclerView: RecyclerView) {
+        val swipeToArchiveCallback = object : SwipeToArchive() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = mAdapter.dataSet[viewHolder.adapterPosition]
                 val itemToBeArchived = ToDoArchive(
@@ -147,13 +199,10 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                     item.title,
                     item.description
                 )
-                dbViewModel.insertArchive(itemToBeArchived)
-                dbViewModel.deleteSingleDataItem(item)
-//                mAdapter.notifyItemRemoved(viewHolder.adapterPosition)
-                restoreDeletedItem(viewHolder.itemView, item, itemToBeArchived)
+                archiveShortcut(viewHolder.itemView, item, itemToBeArchived)
             }
         }
-        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        val itemTouchHelper = ItemTouchHelper(swipeToArchiveCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 

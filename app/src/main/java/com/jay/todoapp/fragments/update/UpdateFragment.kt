@@ -12,11 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.jay.todoapp.R
+import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.data.model.Priority
+import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoDbViewModel
-import com.jay.todoapp.ToDoSharedViewModel
-import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.databinding.FragmentUpdateBinding
 
 class UpdateFragment : Fragment() {
@@ -126,24 +126,35 @@ class UpdateFragment : Fragment() {
     private fun confirmItemRemoval() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
-            deleteItem()
+            when(returnDestination) {
+                "Archive" -> {
+                    val itemToBeDeleted = ToDoArchive(
+                        currentId!!.toInt(),
+                        currentOldId!!.toInt(),
+                        currentPriority,
+                        currentTitle,
+                        currentDesc
+                    )
+                    dbViewModel.deleteSingleArchive(itemToBeDeleted)
+                    findNavController().navigate(R.id.action_updateFragment_to_archiveFragment)
+                }
+                "List" -> {
+                    val itemToBeDeleted = ToDoData(
+                        currentId!!.toInt(),
+                        currentPriority,
+                        currentTitle,
+                        currentDesc
+                    )
+                    dbViewModel.deleteSingleDataItem(itemToBeDeleted)
+                    findNavController().navigate(R.id.action_updateFragment_to_listFragment)
+                }
+            }
             Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_updateFragment_to_listFragment)
         }
         alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
         alertDialogBuilder.setTitle("Delete this Todo?")
         alertDialogBuilder.setMessage("Caution : This is an irreversible action")
         alertDialogBuilder.create().show()
-    }
-
-    private fun deleteItem() {
-        val itemToBeDeleted = ToDoData(
-            currentId!!.toInt(),
-            currentPriority,
-            currentTitle,
-            currentDesc
-        )
-        dbViewModel.deleteSingleDataItem(itemToBeDeleted)
     }
 
     /*

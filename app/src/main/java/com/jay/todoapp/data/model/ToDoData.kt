@@ -2,7 +2,6 @@ package com.jay.todoapp.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.jay.todoapp.data.model.Priority
 
 // Entity act as tables in the DB and the properties of the data class act as the columns of the DB
 @Entity(tableName = "todo_table")

@@ -1,16 +1,14 @@
 package com.jay.todoapp.fragments.archive
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.activity.addCallback
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -18,15 +16,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.jay.todoapp.R
 import com.jay.todoapp.ToDoSharedViewModel
-import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoDbViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
 import com.jay.todoapp.fragments.list.ListFragment
-import com.jay.todoapp.fragments.list.ListFragmentDirections
-import com.jay.todoapp.fragments.list.ToDoAdapter
-import com.jay.todoapp.fragments.update.UpdateFragment
-import com.jay.todoapp.utils.SwipeToDelete
+import com.jay.todoapp.utils.SwipeToArchive
 import com.jay.todoapp.utils.hideKeyboard
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
@@ -116,11 +110,11 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
         binding.notesListRecyclerView.itemAnimator = SlideInUpAnimator().apply{
             addDuration = 300
         }
-        swipeToDelete(binding.notesListRecyclerView)
+        swipeToUnArchive(binding.notesListRecyclerView)
     }
 
-    private fun swipeToDelete(recyclerView: RecyclerView) {
-        val swipeToDeleteCallback = object : SwipeToDelete() {
+    private fun swipeToUnArchive(recyclerView: RecyclerView) {
+        val swipeToUnarchiveCallback = object : SwipeToArchive() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = mAdapter.dataSet[viewHolder.adapterPosition]
 
@@ -137,7 +131,7 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
                     .show()
             }
         }
-        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        val itemTouchHelper = ItemTouchHelper(swipeToUnarchiveCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
     }
 
