@@ -1,8 +1,11 @@
 package com.jay.todoapp.fragments.archive
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.jay.todoapp.R
 import com.jay.todoapp.ToDoSharedViewModel
+import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoDbViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
@@ -94,17 +98,39 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun setUpRecyclerView() {
         // setting an adapter to the recycler view
-        mAdapter = ArchiveAdapter {
-            val action = ArchiveFragmentDirections.actionArchiveFragmentToUpdateFragment(
-                currentTitle = it.title,
-                currentDesc = it.description,
-                currentPriority = it.priority.name,
-                currentId = it.id,
-                returnDestination = "Archive",
-                currentOldId = it.oldId
-            )
-            findNavController().navigate(action)
-        }
+        mAdapter = ArchiveAdapter ({
+            updateShortcut(it)
+        }, {data, view ->
+            val popup = PopupMenu(requireContext(), view)
+            popup.menuInflater.inflate(R.menu.item_long_press_menu, popup.menu)
+            popup.menu.findItem(R.id.menu_press_archive).isVisible = false
+
+            try {
+                val fieldMPopup = PopupMenu::class.java.getDeclaredField("mPopup")
+                fieldMPopup.isAccessible = true
+                val mPopup = fieldMPopup.get(popup)
+                mPopup.javaClass
+                    .getDeclaredMethod("setForceShowIcon", Boolean::class.java)
+                    .invoke(mPopup, true)
+            } catch (e: Exception){
+                Log.e("Main", "Error showing menu icons.", e)
+            } finally {
+                popup.show()
+            }
+
+            popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+                when(menuItem.itemId){
+                    R.id.menu_press_update -> updateShortcut(data)
+                    R.id.menu_press_delete -> deleteShortcut(data)
+                    R.id.menu_press_unarchive -> {
+                        unarchiveShortcut(view, ToDoData(
+                            data.oldId, data.priority, data.title, data.description
+                        ), data)
+                    }
+                }
+                true
+            }
+        })
         binding.notesListRecyclerView.adapter = mAdapter
         // these functions and properties belong to a third party library by "github/wasabeef"
         binding.notesListRecyclerView.itemAnimator = SlideInUpAnimator().apply{
@@ -113,22 +139,47 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
         swipeToUnArchive(binding.notesListRecyclerView)
     }
 
+    private fun updateShortcut(it : ToDoArchive) {
+        val action = ArchiveFragmentDirections.actionArchiveFragmentToUpdateFragment(
+            currentTitle = it.title,
+            currentDesc = it.description,
+            currentPriority = it.priority.name,
+            currentId = it.id,
+            returnDestination = "Archive",
+            currentOldId = it.oldId
+        )
+        findNavController().navigate(action)
+    }
+
+    private fun deleteShortcut(toDoArchive: ToDoArchive) {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+            dbViewModel.deleteSingleArchive(toDoArchive)
+            Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show()
+        }
+        alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
+        alertDialogBuilder.setTitle("Delete this Todo?")
+        alertDialogBuilder.setMessage("Caution : This is an irreversible action")
+        alertDialogBuilder.create().show()
+    }
+
+    private fun unarchiveShortcut(view: View, item: ToDoData, itemToBeArchived: ToDoArchive) {
+        dbViewModel.deleteSingleArchive(itemToBeArchived)
+        dbViewModel.insertData(item)
+        Snackbar.make(view, "Removed from Archive", Snackbar.LENGTH_LONG).show()
+    }
+
     private fun swipeToUnArchive(recyclerView: RecyclerView) {
         val swipeToUnarchiveCallback = object : SwipeToArchive() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = mAdapter.dataSet[viewHolder.adapterPosition]
-
-                dbViewModel.deleteSingleArchive(item)
                 val restoredItem = ToDoData(
                     item.oldId,
                     item.priority,
                     item.title,
                     item.description
                 )
-                dbViewModel.insertData(restoredItem)
-//                mAdapter.notifyItemRemoved(viewHolder.adapterPosition)
-                Snackbar.make(binding.listLayout, "Removed from Archive", Snackbar.LENGTH_LONG)
-                    .show()
+                unarchiveShortcut(viewHolder.itemView, restoredItem, item)
             }
         }
         val itemTouchHelper = ItemTouchHelper(swipeToUnarchiveCallback)
