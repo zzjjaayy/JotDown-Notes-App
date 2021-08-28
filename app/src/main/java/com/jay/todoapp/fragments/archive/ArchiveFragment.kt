@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.jay.todoapp.R
-import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoDbViewModel
@@ -31,7 +30,6 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
 class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
 
-    private val sharedViewModel : ToDoSharedViewModel by activityViewModels()
     private val dbViewModel : ToDoDbViewModel by activityViewModels()
 
     // Binding
@@ -89,13 +87,31 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
                 findNavController().navigate(R.id.action_archiveFragment_to_listFragment)
             }
         }
-        dbViewModel.getAllArchive.observe(viewLifecycleOwner, {
-            Log.d("Jayischecking", "archive list is -> $it")
+        dbViewModel.getAllArchiveNewFirst.observe(viewLifecycleOwner, {
+            dbViewModel.checkIfArchiveEmpty(it)
             mAdapter.setData(it)
+        })
+        dbViewModel.isEmptyArchive.observe(viewLifecycleOwner, {
+            changeVisibilityOfEmptyIndicators(it)
         })
         setUpRecyclerView()
         setHasOptionsMenu(true)
         hideKeyboard(requireActivity())
+    }
+
+    private fun changeVisibilityOfEmptyIndicators(isEmpty : Boolean) {
+        val noDataImg = binding.noDataImage
+        val noDataTxt = binding.noDataText
+        val sort = binding.sortStatus
+        if(isEmpty) {
+            sort.visibility = View.INVISIBLE
+            noDataImg.visibility = View.VISIBLE
+            noDataTxt.visibility = View.VISIBLE
+        } else {
+            sort.visibility = View.VISIBLE
+            noDataImg.visibility = View.INVISIBLE
+            noDataTxt.visibility = View.INVISIBLE
+        }
     }
 
     override fun onDestroy() {
@@ -208,13 +224,13 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
         builder.setPositiveButton("Sort") { dialogInterface: DialogInterface, p1: Int ->
             when(selectedItem) {
                 0 -> {
-                dbViewModel.getAllArchive.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                dbViewModel.getAllArchiveNewFirst.observe(viewLifecycleOwner, { mAdapter.setData(it) })
                 binding.sortStatus.text = getString(R.string.sort_template,
                     ListFragment.LATEST_SORT
                 )
             }
                 1 -> {
-                    dbViewModel.getAllArchiveNewFirst.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    dbViewModel.getAllArchive.observe(viewLifecycleOwner, { mAdapter.setData(it) })
                     binding.sortStatus.text = getString(R.string.sort_template,
                         ListFragment.OLDEST_SORT
                     )

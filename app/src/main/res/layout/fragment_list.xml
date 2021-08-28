@@ -62,27 +62,27 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@drawable/ic_empty_list"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.407"
-            android:contentDescription="@string/no_data"
-            app:emptyDatabase="@{viewModel.isEmptyDb()}" />
+            android:contentDescription="@string/no_data" />
 
         <TextView
             android:id="@+id/no_data_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:visibility="invisible"
             android:text="@string/no_data"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/no_data_image"
-            app:emptyDatabase="@{viewModel.isEmptyDb()}" />
+            app:layout_constraintTop_toBottomOf="@+id/no_data_image" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/extended_fab"

@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.jay.todoapp.R
-import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoDbViewModel
@@ -41,7 +40,6 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     * GLOBAL VARIABLES
     * */
     // ViewModels
-    private val sharedViewModel : ToDoSharedViewModel by activityViewModels()
     private val dbViewModel : ToDoDbViewModel by activityViewModels()
 
     // Binding
@@ -103,14 +101,34 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             }
         }
         // This observer will change the isEmpty live data every time the data set is changed
-        dbViewModel.getAllData.observe(viewLifecycleOwner, {
-            dbViewModel.checkIfDbEmpty(it) // passing the new list to the checker
+        dbViewModel.getAllDataNewFirst.observe(viewLifecycleOwner, {
+            dbViewModel.checkIfDataEmpty(it) // passing the new list to the checker
+            Log.d("jayischecking", it.toString())
             mAdapter.setData(it)
+        })
+
+        dbViewModel.isEmptyData.observe(viewLifecycleOwner, {
+            changeVisibilityOfEmptyIndicators(it)
         })
 
         setUpRecyclerView()
         setHasOptionsMenu(true)
         hideKeyboard(requireActivity())
+    }
+
+    private fun changeVisibilityOfEmptyIndicators(isEmpty : Boolean) {
+        val noDataImg = binding.noDataImage
+        val noDataTxt = binding.noDataText
+        val sort = binding.sortStatus
+        if(isEmpty) {
+            sort.visibility = View.INVISIBLE
+            noDataImg.visibility = View.VISIBLE
+            noDataTxt.visibility = View.VISIBLE
+        } else {
+            sort.visibility = View.VISIBLE
+            noDataImg.visibility = View.INVISIBLE
+            noDataTxt.visibility = View.INVISIBLE
+        }
     }
 
     override fun onDestroyView() {
@@ -262,11 +280,11 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         builder.setPositiveButton("Sort") { dialogInterface: DialogInterface, p1: Int ->
             when(selectedItem) {
                 0 -> {
-                    dbViewModel.getAllData.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    dbViewModel.getAllDataNewFirst.observe(viewLifecycleOwner, { mAdapter.setData(it) })
                     binding.sortStatus.text = getString(R.string.sort_template, LATEST_SORT)
                 }
                 1 -> {
-                    dbViewModel.getAllDataNewFirst.observe(viewLifecycleOwner, { mAdapter.setData(it) })
+                    dbViewModel.getAllData.observe(viewLifecycleOwner, { mAdapter.setData(it) })
                     binding.sortStatus.text = getString(R.string.sort_template, OLDEST_SORT)
                 }
                 2 -> {

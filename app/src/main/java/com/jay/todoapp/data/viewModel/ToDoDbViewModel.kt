@@ -34,9 +34,14 @@ class ToDoDbViewModel(application: Application) : AndroidViewModel(application) 
     val getArchiveByHighPriority : LiveData<List<ToDoArchive>>
     val getArchiveByLowPriority : LiveData<List<ToDoArchive>>
 
-    val isEmptyDb : MutableLiveData<Boolean> = MutableLiveData(false)
-    fun checkIfDbEmpty(toDoData: List<ToDoData>) {
-        isEmptyDb.value = toDoData.isEmpty()
+    val isEmptyData : MutableLiveData<Boolean> = MutableLiveData(false)
+    fun checkIfDataEmpty(toDoData: List<ToDoData>) {
+        isEmptyData.value = toDoData.isEmpty()
+    }
+
+    val isEmptyArchive : MutableLiveData<Boolean> = MutableLiveData(false)
+    fun checkIfArchiveEmpty(toDoArchive: List<ToDoArchive>) {
+        isEmptyArchive.value = toDoArchive.isEmpty()
     }
 
     init {
