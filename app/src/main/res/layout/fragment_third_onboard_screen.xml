@@ -4,18 +4,131 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".onboarding.screens.ThirdOnboardScreen">
+    tools:context=".onboarding.screens.ThirdOnboardScreen"
+    android:theme="@style/OnBoardingTheme">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35" />
 
+    <TextView
+        android:id="@+id/sorting_onboard_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        android:gravity="center"
+        android:text="@string/sorting_options"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <TextView
+        android:id="@+id/sorting_onboard_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/sorting_options_desc"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sorting_onboard_title" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/latest_sort_card"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/sorting_onboard_desc" />
+
+    <TextView
+        android:id="@+id/latest_sort_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/latest_first"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/latest_sort_card"
+        app:layout_constraintStart_toEndOf="@+id/guideline2" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/oldest_sort_card"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintEnd_toStartOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/latest_sort_card" />
+
+    <TextView
+        android:id="@+id/oldest_sort_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/oldest_first"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/oldest_sort_card"
+        app:layout_constraintStart_toEndOf="@+id/guideline2" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/high_low_sort_card"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintEnd_toStartOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/oldest_sort_text" />
+
+    <TextView
+        android:id="@+id/high_low_sort_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/high_priority_first"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/high_low_sort_card"
+        app:layout_constraintStart_toEndOf="@+id/guideline2" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/low_high_sort_card"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintEnd_toStartOf="@id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/high_low_sort_text" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/low_priority_first"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/low_high_sort_card"
+        app:layout_constraintStart_toEndOf="@+id/guideline2" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        style="@style/FabTheme"
         android:id="@+id/next_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="160dp"
+        android:paddingStart="30dp"
+        android:text="@string/let_s_go"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:icon="@drawable/ic_navigate_next_24"
+        app:iconGravity="textEnd"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_navigate_next_24"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -72,6 +72,8 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
             sortStatus.setOnClickListener{
                 changeSorting()
             }
+            noDataText.text = "No Archives Found"
+            noDataTip.text = "Swipe left on any note to archive it!"
             extendedFab.setIconResource(R.drawable.ic_arrow_upward_24)
             extendedFab.text = getString(R.string.all_notes)
             // This is to change the constraints of the FAB
@@ -102,15 +104,18 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun changeVisibilityOfEmptyIndicators(isEmpty : Boolean) {
         val noDataImg = binding.noDataImage
         val noDataTxt = binding.noDataText
+        val noDataTip = binding.noDataTip
         val sort = binding.sortStatus
         if(isEmpty) {
             sort.visibility = View.INVISIBLE
             noDataImg.visibility = View.VISIBLE
             noDataTxt.visibility = View.VISIBLE
+            noDataTip.visibility = View.VISIBLE
         } else {
             sort.visibility = View.VISIBLE
             noDataImg.visibility = View.INVISIBLE
             noDataTxt.visibility = View.INVISIBLE
+            noDataTip.visibility = View.INVISIBLE
         }
     }
 
@@ -189,7 +194,9 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun unarchiveShortcut(view: View, item: ToDoData, itemToBeArchived: ToDoArchive) {
         dbViewModel.deleteSingleArchive(itemToBeArchived)
         dbViewModel.insertData(item)
-        Snackbar.make(view, "Removed from Archive", Snackbar.LENGTH_LONG).show()
+        val snackBar = Snackbar.make(view, "Removed from Archive", Snackbar.LENGTH_LONG)
+        snackBar.anchorView = binding.extendedFab
+        snackBar.show()
     }
 
     private fun swipeToUnArchive(recyclerView: RecyclerView) {

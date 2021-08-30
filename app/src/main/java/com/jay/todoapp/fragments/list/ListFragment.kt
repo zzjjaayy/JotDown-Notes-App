@@ -88,6 +88,8 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             sortStatus.setOnClickListener {
                 changeSorting()
             }
+            noDataText.text = "No Notes Found"
+            noDataTip.text = "Click the + icon to add one!"
             floatingActionButton.setOnClickListener {
                 findNavController().navigate(R.id.action_listFragment_to_addFragment)
             }
@@ -119,15 +121,18 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun changeVisibilityOfEmptyIndicators(isEmpty : Boolean) {
         val noDataImg = binding.noDataImage
         val noDataTxt = binding.noDataText
+        val noDataTip = binding.noDataTip
         val sort = binding.sortStatus
         if(isEmpty) {
             sort.visibility = View.INVISIBLE
             noDataImg.visibility = View.VISIBLE
             noDataTxt.visibility = View.VISIBLE
+            noDataTip.visibility = View.VISIBLE
         } else {
             sort.visibility = View.VISIBLE
             noDataImg.visibility = View.INVISIBLE
             noDataTxt.visibility = View.INVISIBLE
+            noDataTip.visibility = View.INVISIBLE
         }
     }
 
@@ -235,6 +240,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
         val snackBar = Snackbar.make(
             view, "Archived '${deletedItem.title}'", Snackbar.LENGTH_LONG
         )
+        snackBar.anchorView = binding.floatingActionButton
         snackBar.setAction("Undo"){
             dbViewModel.insertData(deletedItem)
             dbViewModel.deleteSingleArchive(archivedItem)

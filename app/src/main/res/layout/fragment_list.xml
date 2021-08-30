@@ -17,17 +17,17 @@
         tools:context=".fragments.list.ListFragment">
 
         <com.google.android.material.chip.Chip
+            style="@style/chipTheme"
             android:id="@+id/sort_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:chipStartPadding="15dp"
             app:chipIcon="@drawable/ic_action_name"
-            app:chipBackgroundColor="@color/teal_200"
-            android:textColor="@color/black"
             tools:text="Sort : Status"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/notesListRecyclerView"
@@ -45,6 +45,7 @@
             android:paddingBottom="8dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            style="@style/FabTheme"
             android:id="@+id/floatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,17 +60,16 @@
 
         <ImageView
             android:id="@+id/no_data_image"
+            style="@style/noDataIconTheme"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@drawable/ic_empty_list"
+            android:layout_marginTop="150dp"
+            android:contentDescription="@string/no_data"
+            android:src="@drawable/ic_empty_data"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.407"
-            android:contentDescription="@string/no_data" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/no_data_text"
@@ -78,13 +78,25 @@
             android:layout_marginTop="24dp"
             android:visibility="invisible"
             android:text="@string/no_data"
-            android:textSize="18sp"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/no_data_image" />
 
+        <TextView
+            android:id="@+id/no_data_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:visibility="invisible"
+            android:text="@string/no_data"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/no_data_text" />
+
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            style="@style/FabTheme"
             android:id="@+id/extended_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
