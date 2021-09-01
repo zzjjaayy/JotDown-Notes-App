@@ -103,6 +103,9 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 }
                 findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
             }
+            button.setOnClickListener {
+                findNavController().navigate(R.id.action_listFragment_to_userInfoFragment)
+            }
         }
         // This observer will change the isEmpty live data every time the data set is changed
         dbViewModel.getAllDataNewFirst.observe(viewLifecycleOwner, {

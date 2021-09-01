@@ -31,6 +31,9 @@
             app:exitAnim="@anim/to_up"
             app:popEnterAnim="@anim/from_up"
             app:popExitAnim="@anim/to_down" />
+        <action
+            android:id="@+id/action_listFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/addFragment"
@@ -142,4 +145,9 @@
             android:id="@+id/action_signInFragment_to_listFragment"
             app:destination="@id/listFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/userInfoFragment"
+        android:name="com.jay.todoapp.fragments.signIn.UserInfoFragment"
+        android:label="fragment_user_info"
+        tools:layout="@layout/fragment_user_info" />
 </navigation>
