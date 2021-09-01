@@ -68,7 +68,9 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 if(!searchView.isIconified) {
                     searchView.setQuery("", true)
                     searchView.isIconified = true
-                    binding.sortStatus.visibility = View.VISIBLE
+                    if(dbViewModel.isEmptyData.value != true) {
+                        binding.sortStatus.visibility = View.VISIBLE
+                    }
                 } else activity?.finish()
             }
 
@@ -134,6 +136,11 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             noDataTxt.visibility = View.INVISIBLE
             noDataTip.visibility = View.INVISIBLE
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mAdapter.notifyDataSetChanged()
     }
 
     override fun onDestroyView() {
