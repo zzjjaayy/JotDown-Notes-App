@@ -62,6 +62,7 @@ class SignInFragment : Fragment() {
         }
         binding.noSignInButton.setOnClickListener {
             onNoSignInOptionClicked()
+            findNavController().navigate(R.id.action_signInFragment_to_listFragment)
         }
     }
 

@@ -2,6 +2,9 @@ package com.jay.todoapp.fragments.list
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -16,7 +19,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 import com.jay.todoapp.R
 import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
@@ -55,6 +63,8 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     // This is to keep record of the present sorting option in dialog box
     private var selectedItem : Int = 0
 
+    private lateinit var mAuth: FirebaseAuth
+
     /*
     * LIFECYCLE FUNCTIONS
     * */
@@ -73,6 +83,8 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                     }
                 } else activity?.finish()
             }
+            // Firebase auth instance
+            mAuth = FirebaseAuth.getInstance()
 
             // Inflate the layout for this fragment
             _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_list, container, false)
@@ -102,9 +114,6 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                     binding.sortStatus.visibility = View.VISIBLE
                 }
                 findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
-            }
-            button.setOnClickListener {
-                findNavController().navigate(R.id.action_listFragment_to_userInfoFragment)
             }
         }
         // This observer will change the isEmpty live data every time the data set is changed
@@ -265,6 +274,22 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.list_fragment_menu, menu)
 
+        val userIcon = menu.findItem(R.id.menu_account)
+        if(mAuth.currentUser != null) {
+            Glide.with(this)
+                .asBitmap()
+                .load(mAuth.currentUser?.photoUrl)
+                .circleCrop()
+                .into(object : CustomTarget<Bitmap>(){
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        userIcon.icon = BitmapDrawable(resources, resource)
+                    }
+                    override fun onLoadCleared(placeholder: Drawable?) {}
+                })
+        } else {
+            userIcon.setIcon(R.drawable.ic_default_account)
+        }
+
         val search = menu.findItem(R.id.menu_search)
         searchView = (search.actionView as? SearchView)!!
         searchView.setOnQueryTextListener(this)
@@ -282,7 +307,14 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.menu_delete_all) confirmRemoval()
+        when (item.itemId) {
+            R.id.menu_delete_all -> {
+                confirmRemoval()
+            }
+            R.id.menu_account -> {
+                findNavController().navigate(R.id.action_listFragment_to_userInfoFragment)
+            }
+        }
         return super.onOptionsItemSelected(item)
     }
 

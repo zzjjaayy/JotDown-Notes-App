@@ -31,4 +31,5 @@
     <string name="high_priority_first">High to Low Priority</string>
     <string name="low_priority_first">Low to High Priority</string>
     <string name="let_s_go">Let\'s Go!</string>
+    <string name="account_backup"><![CDATA[Account & Backup]]></string>
 </resources>
