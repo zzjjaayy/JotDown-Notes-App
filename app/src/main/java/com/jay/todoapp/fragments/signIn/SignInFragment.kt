@@ -1,5 +1,6 @@
 package com.jay.todoapp.fragments.signIn
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -30,6 +31,10 @@ class SignInFragment : Fragment() {
         private const val RC_SIGN_IN = 120
     }
 
+    /*
+    * LIFECYCLE METHODS
+    * */
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,7 +57,11 @@ class SignInFragment : Fragment() {
         mAuth = FirebaseAuth.getInstance()
 
         binding.signInButton.setOnClickListener {
+            googleSignInClient.signOut()
             signIn()
+        }
+        binding.noSignInButton.setOnClickListener {
+            onNoSignInOptionClicked()
         }
     }
 
@@ -60,6 +69,10 @@ class SignInFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    /*
+    * SIGN IN METHODS
+    * */
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
@@ -102,5 +115,15 @@ class SignInFragment : Fragment() {
                     Log.w("jayischecking", "signInWithCredential:failure", task.exception)
                 }
             }
+    }
+
+    /*
+    * SHARED PREFERENCE FOR SIGN IN
+    * */
+    private fun onNoSignInOptionClicked() {
+        val sharedPref = requireActivity().getSharedPreferences("SignIn", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putBoolean("SignIn", false)
+        editor.apply()
     }
 }

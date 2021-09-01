@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.jay.todoapp.R
+import com.jay.todoapp.onboarding.splashScreen.SplashFragment
 
 class ThirdOnboardScreen : Fragment() {
     override fun onCreateView(
@@ -19,7 +20,11 @@ class ThirdOnboardScreen : Fragment() {
         val view = inflater.inflate(R.layout.fragment_third_onboard_screen, container, false)
         view.findViewById<ExtendedFloatingActionButton>(R.id.next_fab).setOnClickListener {
             onBoardingFinished()
-            findNavController().navigate(R.id.action_viewPagerFragment_to_listFragment)
+            if(startSignIn()) {
+                findNavController().navigate(R.id.action_viewPagerFragment_to_signInFragment)
+            } else {
+                findNavController().navigate(R.id.action_viewPagerFragment_to_listFragment)
+            }
         }
         return view
     }
@@ -29,5 +34,10 @@ class ThirdOnboardScreen : Fragment() {
         val editor = sharedPref.edit()
         editor.putBoolean("Finished", true)
         editor.apply()
+    }
+
+    private fun startSignIn() : Boolean{
+        val sharedPref = requireActivity().getSharedPreferences("SignIn", Context.MODE_PRIVATE)
+        return sharedPref.getBoolean("SignIn", true)
     }
 }

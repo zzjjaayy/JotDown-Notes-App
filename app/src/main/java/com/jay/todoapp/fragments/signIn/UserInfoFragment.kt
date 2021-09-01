@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.jay.todoapp.R
@@ -32,13 +33,18 @@ class UserInfoFragment : Fragment() {
         if(mAuth.currentUser == null) {
             binding.userName.text = "idk mate"
             binding.userMail.text = "idk mate"
+            binding.button2.text = "Sign In"
+            binding.button2.setOnClickListener {
+                findNavController().navigate(R.id.action_userInfoFragment_to_signInFragment)
+            }
         } else {
             Glide.with(this).load(mAuth.currentUser?.photoUrl).into(binding.imageView2)
             binding.userName.text = mAuth.currentUser?.displayName
             binding.userMail.text = mAuth.currentUser?.email
-        }
-        binding.button2.setOnClickListener {
-            mAuth.signOut()
+            binding.button2.text = "Sign Out"
+            binding.button2.setOnClickListener {
+                mAuth.signOut()
+            }
         }
     }
 }
