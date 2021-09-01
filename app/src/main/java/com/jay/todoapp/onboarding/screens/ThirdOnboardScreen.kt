@@ -2,13 +2,12 @@ package com.jay.todoapp.onboarding.screens
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.jay.todoapp.R
 
 class ThirdOnboardScreen : Fragment() {
@@ -18,7 +17,7 @@ class ThirdOnboardScreen : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_third_onboard_screen, container, false)
-        view.findViewById<FloatingActionButton>(R.id.next_fab).setOnClickListener {
+        view.findViewById<ExtendedFloatingActionButton>(R.id.next_fab).setOnClickListener {
             onBoardingFinished()
             findNavController().navigate(R.id.action_viewPagerFragment_to_listFragment)
         }

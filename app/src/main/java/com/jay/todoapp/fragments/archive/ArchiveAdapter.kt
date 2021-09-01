@@ -11,12 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jay.todoapp.R
 import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoArchive
-import com.jay.todoapp.data.model.ToDoData
-import com.jay.todoapp.fragments.list.ToDoAdapter
-import com.jay.todoapp.utils.ToDoDiffUtil
 import com.jay.todoapp.utils.archiveDiffUtil
 
-class ArchiveAdapter(val onArchiveClicked: (ToDoArchive) -> Unit) : RecyclerView.Adapter<ArchiveAdapter.ArchiveViewHolder>(){
+class ArchiveAdapter(private val onArchiveClicked: (ToDoArchive) -> Unit,
+                     private val onArchiveLongPressed: (ToDoArchive, View) -> Unit)
+    : RecyclerView.Adapter<ArchiveAdapter.ArchiveViewHolder>(){
 
     var dataSet: List<ToDoArchive> = emptyList()
 
@@ -58,6 +57,10 @@ class ArchiveAdapter(val onArchiveClicked: (ToDoArchive) -> Unit) : RecyclerView
         }
         holder.itemView.setOnClickListener {
             onArchiveClicked(getItem(holder.adapterPosition))
+        }
+        holder.itemView.setOnLongClickListener {
+            onArchiveLongPressed(getItem(holder.adapterPosition), holder.itemView)
+            true
         }
     }
 

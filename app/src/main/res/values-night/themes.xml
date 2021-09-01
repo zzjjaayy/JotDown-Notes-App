@@ -13,4 +13,22 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorOnPrimary</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="OnBoardingTheme">
+        <item name="android:fontFamily">@font/now_regular</item>
+        <item name="android:backgroundTint">@color/light_cyan</item>
+    </style>
+    <style name="FabTheme">
+        <item name="android:backgroundTint">@color/light_cyan</item>
+        <item name="iconTint">@color/dark_blue</item>
+        <item name="android:textColor">@color/dark_blue</item>
+        <item name="tint">@color/dark_blue</item>
+    </style>
+    <style name="chipTheme">
+        <item name="chipBackgroundColor">@color/light_cyan</item>
+        <item name="android:textColor">@color/dark_blue_lighter</item>
+        <item name="chipIconTint">@color/dark_blue_lighter</item>
+    </style>
+    <style name="noDataIconTheme">
+        <item name="android:tint">@color/light_cyan</item>
+    </style>
 </resources>

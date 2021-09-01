@@ -27,7 +27,7 @@ interface ToDoDao {
     suspend fun deleteAllToDoData()
 
     @Query("SELECT * FROM todo_table WHERE title LIKE :search OR description LIKE :search")
-    fun searchDb(search: String) : List<ToDoData>
+    fun searchAllData(search: String) : List<ToDoData>
 
     @Query("SELECT * FROM todo_table ORDER BY CASE WHEN priority LIKE 'H%' THEN 1 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'L%' THEN 3 END")
     fun sortByHigh() : LiveData<List<ToDoData>>
@@ -36,7 +36,7 @@ interface ToDoDao {
     fun sortByLow() : LiveData<List<ToDoData>>
 
     @Query("SELECT * FROM todo_table ORDER BY id DESC")
-    fun getAllDataOldFirst() : LiveData<List<ToDoData>>
+    fun getAllDataNewestFirst() : LiveData<List<ToDoData>>
 
     /*
     * TODO ARCHIVE QUERIES
@@ -50,7 +50,19 @@ interface ToDoDao {
     @Update
     suspend fun updateToDoArchive(toDoArchive: ToDoArchive)
 
-    @Delete
-    suspend fun deleteToDoArchive(toDoArchive: ToDoArchive)
+    @Query("DELETE FROM todo_archive_table WHERE oldId = :id")
+    suspend fun deleteToDoArchive(id: Int) : Int
+
+    @Query("SELECT * FROM todo_archive_table ORDER BY CASE WHEN priority LIKE 'H%' THEN 1 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'L%' THEN 3 END")
+    fun sortArchiveByHigh() : LiveData<List<ToDoArchive>>
+
+    @Query("SELECT * FROM todo_archive_table ORDER BY CASE WHEN priority LIKE 'H%' THEN 3 WHEN priority LIKE 'M%' THEN 2 WHEN priority LIKE 'L%' THEN 1 END")
+    fun sortArchiveByLow() : LiveData<List<ToDoArchive>>
+
+    @Query("SELECT * FROM todo_archive_table ORDER BY id DESC")
+    fun getArchiveNewFirst() : LiveData<List<ToDoArchive>>
+
+    @Query("SELECT * FROM todo_archive_table WHERE title LIKE :search OR description LIKE :search")
+    fun searchAllArchive(search: String) : List<ToDoArchive>
 
 }

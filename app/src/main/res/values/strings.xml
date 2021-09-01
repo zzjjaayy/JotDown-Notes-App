@@ -16,4 +16,19 @@
     <string name="delete_note">Delete Note</string>
     <string name="oldest_first">Oldest First</string>
     <string name="latest_first">Latest First</string>
+    <string name="archive">Archive</string>
+    <string name="sort_template">Sorted : %s</string>
+    <string name="all_notes">All Notes</string>
+    <string name="jotdown_logo">JotDown Logo</string>
+    <string name="next_action">Next</string>
+    <string name="welcome_desc">Your one place to create &amp;\nmanage short notes</string>
+    <string name="welcome_title">Welcome To JotDown</string>
+    <string name="priority_onboard_title">Priority Levels</string>
+    <string name="priority_onboard_desc">Make it suit your priority.</string>
+    <string name="medium_priority">Medium Priority</string>
+    <string name="sorting_options">Sorting Options</string>
+    <string name="sorting_options_desc">Arrange them the way you like</string>
+    <string name="high_priority_first">High to Low Priority</string>
+    <string name="low_priority_first">Low to High Priority</string>
+    <string name="let_s_go">Let\'s Go!</string>
 </resources>

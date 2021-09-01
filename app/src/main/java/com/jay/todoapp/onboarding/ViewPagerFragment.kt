@@ -1,10 +1,11 @@
 package com.jay.todoapp.onboarding
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
+import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.jay.todoapp.R
 import com.jay.todoapp.onboarding.screens.FirstOnboardScreen
@@ -17,6 +18,9 @@ class ViewPagerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        requireActivity().onBackPressedDispatcher.addCallback(this){
+            activity?.finish()
+        }
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_view_pager, container, false)
         val fragmentList = arrayListOf<Fragment>(

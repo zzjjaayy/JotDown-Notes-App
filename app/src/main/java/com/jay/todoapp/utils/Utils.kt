@@ -50,7 +50,7 @@ class archiveDiffUtil(private val oldList : List<ToDoArchive>, private val newLi
 
 // This class is practically created to not crowd the ListFragment as ItemTouchHelper requires you to
 // override two methods but we don't need "onMove"
-abstract class SwipeToDelete : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
+abstract class SwipeToArchive : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
     override fun onMove(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder,

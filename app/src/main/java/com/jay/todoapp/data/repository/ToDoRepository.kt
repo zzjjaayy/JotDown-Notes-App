@@ -9,7 +9,7 @@ import com.jay.todoapp.data.model.ToDoData
 // This is NOT an architectural component unlike Room DB but is recommended
 class ToDoRepository(private val toDoDao: ToDoDao) {
     val getAllData : LiveData<List<ToDoData>> = toDoDao.getAllData()
-    val getAllDataOldFirst : LiveData<List<ToDoData>> = toDoDao.getAllDataOldFirst()
+    val getAllDataNewFirst : LiveData<List<ToDoData>> = toDoDao.getAllDataNewestFirst()
     val getDataByHigh : LiveData<List<ToDoData>> = toDoDao.sortByHigh()
     val getDataByLow : LiveData<List<ToDoData>> = toDoDao.sortByLow()
 
@@ -25,8 +25,8 @@ class ToDoRepository(private val toDoDao: ToDoDao) {
     suspend fun deleteAllData() {
         toDoDao.deleteAllToDoData()
     }
-    fun searchDatabase(search : String) : List<ToDoData>{
-        return toDoDao.searchDb(search)
+    fun searchAllData(search : String) : List<ToDoData>{
+        return toDoDao.searchAllData(search)
     }
 
     /*
@@ -34,7 +34,20 @@ class ToDoRepository(private val toDoDao: ToDoDao) {
     * */
 
     val getAllArchive : LiveData<List<ToDoArchive>> = toDoDao.getAllArchive()
-    suspend fun insertArchive(toDoArchive: ToDoArchive) = toDoDao.insertToDoArchive(toDoArchive)
-    suspend fun updateArchive(toDoArchive: ToDoArchive) = toDoDao.updateToDoArchive(toDoArchive)
-    suspend fun deleteArchive(toDoArchive: ToDoArchive) = toDoDao.deleteToDoArchive(toDoArchive)
+    val getArchiveNewFirst : LiveData<List<ToDoArchive>> = toDoDao.getArchiveNewFirst()
+    val getArchiveByHigh : LiveData<List<ToDoArchive>> = toDoDao.sortArchiveByHigh()
+    val getArchiveByLow : LiveData<List<ToDoArchive>> = toDoDao.sortArchiveByLow()
+
+    suspend fun insertArchive(toDoArchive: ToDoArchive){
+        toDoDao.insertToDoArchive(toDoArchive)
+    }
+    suspend fun updateArchive(toDoArchive: ToDoArchive) {
+        toDoDao.updateToDoArchive(toDoArchive)
+    }
+    suspend fun deleteArchive(toDoArchive: ToDoArchive) {
+        toDoDao.deleteToDoArchive(toDoArchive.oldId)
+    }
+    fun searchAllArchive(search : String) : List<ToDoArchive>{
+        return toDoDao.searchAllArchive(search)
+    }
 }

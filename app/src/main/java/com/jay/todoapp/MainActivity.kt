@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
             .Builder(
                 R.id.listFragment,
                 R.id.splashFragment,
-                R.id.viewPagerFragment
+                R.id.viewPagerFragment,
+                R.id.archiveFragment
             ).build()
 
         // managing action bar with actions in the nav host fragment

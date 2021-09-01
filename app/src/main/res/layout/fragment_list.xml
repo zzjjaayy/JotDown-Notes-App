@@ -16,22 +16,36 @@
         android:id="@+id/list_layout"
         tools:context=".fragments.list.ListFragment">
 
+        <com.google.android.material.chip.Chip
+            style="@style/chipTheme"
+            android:id="@+id/sort_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chipStartPadding="15dp"
+            app:chipIcon="@drawable/ic_action_name"
+            tools:text="Sort : Status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/notesListRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sort_status"
             app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
             app:spanCount="2"
             android:orientation="vertical"
             android:clipToPadding="false"
-            android:paddingTop="8dp" />
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            style="@style/FabTheme"
             android:id="@+id/floatingActionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,46 +56,59 @@
             android:src="@drawable/ic_add_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="@string/add_a_new_note"
-            app:navigateToAddFragment="@{true}"/>
+            android:contentDescription="@string/add_a_new_note" />
 
         <ImageView
             android:id="@+id/no_data_image"
+            style="@style/noDataIconTheme"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:src="@drawable/ic_empty_list"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.407"
+            android:layout_marginTop="150dp"
             android:contentDescription="@string/no_data"
-            app:emptyDatabase="@{viewModel.isEmptyDb()}" />
+            android:src="@drawable/ic_empty_data"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/no_data_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:visibility="invisible"
             android:text="@string/no_data"
-            android:textSize="18sp"
+            android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/no_data_image"
-            app:emptyDatabase="@{viewModel.isEmptyDb()}" />
+            app:layout_constraintTop_toBottomOf="@+id/no_data_image" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton2"
+        <TextView
+            android:id="@+id/no_data_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:visibility="invisible"
+            android:text="@string/no_data"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/no_data_text" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            style="@style/FabTheme"
+            android:id="@+id/extended_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginBottom="24dp"
+            android:padding="12dp"
             android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_delete_24" />
+            app:icon="@drawable/ic_archive_24"
+            android:text="@string/archive"
+            android:focusable="true" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

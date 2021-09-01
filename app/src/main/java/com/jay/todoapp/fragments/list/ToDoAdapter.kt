@@ -13,7 +13,9 @@ import com.jay.todoapp.data.model.Priority
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.utils.ToDoDiffUtil
 
-class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit) : RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder>(){
+class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit,
+                  private val onToDoLongPressed: (ToDoData, View) -> Unit)
+    : RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder>(){
 
     var dataSet: List<ToDoData> = emptyList()
 
@@ -39,6 +41,10 @@ class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit) : RecyclerView.
         }
         holder.itemView.setOnClickListener {
             onToDoClicked(getItem(holder.adapterPosition))
+        }
+        holder.itemView.setOnLongClickListener {
+            onToDoLongPressed(getItem(holder.adapterPosition), holder.itemView)
+            true
         }
     }
 

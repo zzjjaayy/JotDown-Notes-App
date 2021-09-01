@@ -2,6 +2,7 @@ package com.jay.todoapp.fragments.update
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -11,10 +12,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.jay.todoapp.R
+import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.data.model.Priority
+import com.jay.todoapp.data.model.ToDoArchive
 import com.jay.todoapp.data.model.ToDoData
 import com.jay.todoapp.data.viewModel.ToDoDbViewModel
-import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.databinding.FragmentUpdateBinding
 
 class UpdateFragment : Fragment() {
@@ -36,6 +38,8 @@ class UpdateFragment : Fragment() {
     private lateinit var currentDesc: String
     private lateinit var currentPriority: Priority
     private var currentId: Int? = null
+    private var returnDestination : String? = null
+    private var currentOldId : Int? = null
 
     /*
     * LIFECYCLE FUNCTIONS
@@ -53,6 +57,8 @@ class UpdateFragment : Fragment() {
             currentDesc = it.getString(CURRENT_DESC).toString()
             currentPriority = Priority.valueOf(it.getString(CURRENT_PRIORITY).toString())
             currentId = it.getInt(CURRENT_ID)
+            returnDestination = it.getString("returnDestination")
+            currentOldId = it.getInt("currentOldId")
         }
         return binding.root
     }
@@ -120,24 +126,35 @@ class UpdateFragment : Fragment() {
     private fun confirmItemRemoval() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
-            deleteItem()
+            when(returnDestination) {
+                "Archive" -> {
+                    val itemToBeDeleted = ToDoArchive(
+                        currentId!!.toInt(),
+                        currentOldId!!.toInt(),
+                        currentPriority,
+                        currentTitle,
+                        currentDesc
+                    )
+                    dbViewModel.deleteSingleArchive(itemToBeDeleted)
+                    findNavController().navigate(R.id.action_updateFragment_to_archiveFragment)
+                }
+                "List" -> {
+                    val itemToBeDeleted = ToDoData(
+                        currentId!!.toInt(),
+                        currentPriority,
+                        currentTitle,
+                        currentDesc
+                    )
+                    dbViewModel.deleteSingleDataItem(itemToBeDeleted)
+                    findNavController().navigate(R.id.action_updateFragment_to_listFragment)
+                }
+            }
             Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_updateFragment_to_listFragment)
         }
         alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
         alertDialogBuilder.setTitle("Delete this Todo?")
-        alertDialogBuilder.setMessage("Are you sure you want to delete \"$currentTitle\"?")
+        alertDialogBuilder.setMessage("Caution : This is an irreversible action")
         alertDialogBuilder.create().show()
-    }
-
-    private fun deleteItem() {
-        val itemToBeDeleted = ToDoData(
-            currentId!!.toInt(),
-            currentPriority,
-            currentTitle,
-            currentDesc
-        )
-        dbViewModel.deleteSingleDataItem(itemToBeDeleted)
     }
 
     /*
@@ -149,12 +166,25 @@ class UpdateFragment : Fragment() {
         val priorityLevel : String = binding.autocompleteTextView.text.toString()
 
         if(sharedViewModel.verifyUserData(toDoTitle, priorityLevel)) {
-            val itemToBeUpdated = ToDoData(
-                currentId!!.toInt(), sharedViewModel.parseStringToPriority(priorityLevel), toDoTitle, toDoDesc
-            )
-            dbViewModel.updateData(itemToBeUpdated)
+            when (returnDestination) {
+                "Archive" -> {
+                    Log.d("jayischecking", "Update To archive")
+                    val itemToBeUpdated = ToDoArchive(
+                        currentId!!.toInt(), currentOldId!!.toInt(), sharedViewModel.parseStringToPriority(priorityLevel), toDoTitle, toDoDesc
+                    )
+                    dbViewModel.updateArchive(itemToBeUpdated)
+                    findNavController().navigate(R.id.action_updateFragment_to_archiveFragment)
+                }
+                "List" -> {
+                    Log.d("jayischecking", "Update To List")
+                    val itemToBeUpdated = ToDoData(
+                        currentId!!.toInt(), sharedViewModel.parseStringToPriority(priorityLevel), toDoTitle, toDoDesc
+                    )
+                    dbViewModel.updateData(itemToBeUpdated)
+                    findNavController().navigate(R.id.action_updateFragment_to_listFragment)
+                }
+            }
             Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_updateFragment_to_listFragment)
         }
     }
 }
