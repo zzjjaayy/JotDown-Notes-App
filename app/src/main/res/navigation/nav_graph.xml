@@ -93,6 +93,9 @@
             app:destination="@id/listFragment"
             app:popUpTo="@id/listFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_viewPagerFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
     </fragment>
     <fragment
         android:id="@+id/splashFragment"
@@ -109,6 +112,9 @@
             app:destination="@id/listFragment"
             app:popUpTo="@id/listFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
     </fragment>
     <fragment
         android:id="@+id/archiveFragment"
@@ -126,5 +132,14 @@
             app:destination="@id/listFragment"
             app:enterAnim="@anim/from_up"
             app:exitAnim="@anim/to_down" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.jay.todoapp.fragments.signIn.SignInFragment"
+        android:label="fragment_sign_in"
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signInFragment_to_listFragment"
+            app:destination="@id/listFragment" />
     </fragment>
 </navigation>
