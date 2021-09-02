@@ -269,6 +269,7 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
         inflater.inflate(R.menu.list_fragment_menu, menu)
 
         menu.findItem(R.id.menu_delete_all).isVisible = false
+        menu.findItem(R.id.menu_account).isVisible = false
 
         val search = menu.findItem(R.id.menu_search)
         searchView = (search.actionView as? SearchView)!!

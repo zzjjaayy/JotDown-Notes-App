@@ -5,34 +5,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/OnBoardingTheme"
     tools:context=".fragments.signIn.SignInFragment">
 
     <TextView
-        android:id="@+id/textView4"
-        android:layout_width="match_parent"
+        android:id="@+id/sign_in_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
         android:gravity="center"
-        android:text="Sign in activity"
+        android:text="@string/hey_there"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/sign_in_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign in with Google"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageView
+        android:id="@+id/sign_in_illustration"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_title"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/ic_login_image"/>
 
-    <Button
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/sign_in_button"
+        style="@style/FabTheme"
+        app:iconPadding="15dp"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp"
+        android:padding="15dp"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_in_with_google"
+        android:layout_marginTop="90dp"
+        app:icon="@drawable/ic_google_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_illustration" />
+
+    <TextView
         android:id="@+id/no_sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Continue with no backups"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/no_login"
+        android:layout_marginTop="25dp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sign_in_button" />

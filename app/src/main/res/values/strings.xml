@@ -32,4 +32,9 @@
     <string name="low_priority_first">Low to High Priority</string>
     <string name="let_s_go">Let\'s Go!</string>
     <string name="account_backup"><![CDATA[Account & Backup]]></string>
+    <string name="hey_there">Hey there!</string>
+    <string name="no_login">Continue without Sign In</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="backup_options_title">Backup Options</string>
+    <string name="sign_out">Sign Out</string>
 </resources>

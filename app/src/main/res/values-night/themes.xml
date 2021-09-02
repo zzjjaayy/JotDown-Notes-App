@@ -31,4 +31,7 @@
     <style name="noDataIconTheme">
         <item name="android:tint">@color/light_cyan</item>
     </style>
+    <style name="sectionDividerTheme">
+        <item name="android:background">@color/light_cyan</item>
+    </style>
 </resources>
