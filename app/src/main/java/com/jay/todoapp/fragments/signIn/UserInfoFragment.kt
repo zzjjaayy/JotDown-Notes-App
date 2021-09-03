@@ -38,7 +38,7 @@ class UserInfoFragment : Fragment() {
                 userMail.visibility = View.GONE
                 userImage.visibility = View.GONE
                 sectionDivider.visibility = View.GONE
-                backupOptionTitle.visibility = View.GONE
+//                backupOptionTitle.visibility = View.GONE
                 logButton.text = "Sign In"
                 logButton.setIconResource(R.drawable.ic_google_logo)
                 logButton.setOnClickListener {
