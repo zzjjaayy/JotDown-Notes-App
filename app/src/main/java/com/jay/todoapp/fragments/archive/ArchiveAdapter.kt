@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jay.todoapp.R
 import com.jay.todoapp.data.model.Priority
-import com.jay.todoapp.data.model.ToDoArchive
-import com.jay.todoapp.utils.archiveDiffUtil
+import com.jay.todoapp.data.model.ToDo
+import com.jay.todoapp.utils.ArchiveDiffUtil
 
-class ArchiveAdapter(private val onArchiveClicked: (ToDoArchive) -> Unit,
-                     private val onArchiveLongPressed: (ToDoArchive, View) -> Unit)
+class ArchiveAdapter(private val onArchiveClicked: (ToDo) -> Unit,
+                     private val onArchiveLongPressed: (ToDo, View) -> Unit)
     : RecyclerView.Adapter<ArchiveAdapter.ArchiveViewHolder>(){
 
-    var dataSet: List<ToDoArchive> = emptyList()
+    var dataSet: List<ToDo> = emptyList()
 
     class ArchiveViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val toDoTitle: TextView = view.findViewById(R.id.to_do_title)
@@ -64,12 +64,12 @@ class ArchiveAdapter(private val onArchiveClicked: (ToDoArchive) -> Unit,
         }
     }
 
-    private fun getItem(position: Int): ToDoArchive = dataSet[position]
+    private fun getItem(position: Int): ToDo = dataSet[position]
 
     override fun getItemCount(): Int = dataSet.size
 
-    fun setData(toDoData: List<ToDoArchive>) {
-        val diffUtil = archiveDiffUtil(dataSet, toDoData)
+    fun setData(toDoData: List<ToDo>) {
+        val diffUtil = ArchiveDiffUtil(dataSet, toDoData)
         val diffUtilResult = DiffUtil.calculateDiff(diffUtil) // This will calculate the difference
         dataSet = toDoData
         diffUtilResult.dispatchUpdatesTo(this)

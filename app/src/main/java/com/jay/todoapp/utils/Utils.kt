@@ -6,8 +6,9 @@ import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.jay.todoapp.data.model.ToDoArchive
-import com.jay.todoapp.data.model.ToDoData
+import com.jay.todoapp.data.model.ToDo
+
+const val LOG_TAG = "jaylogtag"
 
 fun hideKeyboard(activity: Activity) {
     val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -20,7 +21,7 @@ fun hideKeyboard(activity: Activity) {
 }
 
 // Diff Util implementation in recycler view adapter
-class ToDoDiffUtil(private val oldList : List<ToDoData>, private val newList : List<ToDoData>) : DiffUtil.Callback(){
+class ToDoDiffUtil(private val oldList : List<ToDo>, private val newList : List<ToDo>) : DiffUtil.Callback(){
     override fun getOldListSize(): Int = oldList.size
 
     override fun getNewListSize(): Int  = newList.size
@@ -34,7 +35,7 @@ class ToDoDiffUtil(private val oldList : List<ToDoData>, private val newList : L
     }
 }
 
-class archiveDiffUtil(private val oldList : List<ToDoArchive>, private val newList : List<ToDoArchive>) : DiffUtil.Callback(){
+class ArchiveDiffUtil(private val oldList : List<ToDo>, private val newList : List<ToDo>) : DiffUtil.Callback(){
     override fun getOldListSize(): Int = oldList.size
 
     override fun getNewListSize(): Int  = newList.size

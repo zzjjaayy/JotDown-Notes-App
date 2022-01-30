@@ -11,39 +11,23 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.jay.todoapp.R
-import com.jay.todoapp.ToDoSharedViewModel
 import com.jay.todoapp.data.model.Priority
-import com.jay.todoapp.data.model.ToDoArchive
-import com.jay.todoapp.data.model.ToDoData
-import com.jay.todoapp.data.viewModel.ToDoDbViewModel
+import com.jay.todoapp.data.model.ToDo
+import com.jay.todoapp.data.viewmodel.ToDoSharedViewModel
 import com.jay.todoapp.databinding.FragmentUpdateBinding
+import com.jay.todoapp.utils.LOG_TAG
 
 class UpdateFragment : Fragment() {
 
-    companion object {
-        var CURRENT_TITLE = "currentTitle"
-        var CURRENT_DESC = "currentDesc"
-        var CURRENT_PRIORITY = "currentPriority"
-        var CURRENT_ID = "currentId"
-    }
-
     private val sharedViewModel : ToDoSharedViewModel by activityViewModels()
-    private val dbViewModel : ToDoDbViewModel by activityViewModels()
 
     private var _binding: FragmentUpdateBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var currentTitle: String
-    private lateinit var currentDesc: String
-    private lateinit var currentPriority: Priority
-    private var currentId: Int? = null
-    private var returnDestination : String? = null
-    private var currentOldId : Int? = null
-
-    /*
-    * LIFECYCLE FUNCTIONS
-    * */
+    private val args : UpdateFragmentArgs by navArgs()
+    private var toDo: ToDo? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,15 +35,6 @@ class UpdateFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentUpdateBinding.inflate(inflater, container, false)
-
-        arguments?.let {
-            currentTitle = it.getString(CURRENT_TITLE).toString()
-            currentDesc = it.getString(CURRENT_DESC).toString()
-            currentPriority = Priority.valueOf(it.getString(CURRENT_PRIORITY).toString())
-            currentId = it.getInt(CURRENT_ID)
-            returnDestination = it.getString("returnDestination")
-            currentOldId = it.getInt("currentOldId")
-        }
         return binding.root
     }
 
@@ -84,10 +59,16 @@ class UpdateFragment : Fragment() {
                 }
             }
 
+        toDo = sharedViewModel.mapOfDocIdWithAllToDo[args.currentId] ?: run {
+            findNavController().popBackStack()
+            Toast.makeText(requireActivity(), "Could not find todo to edit!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         // Settings previous value
-        binding.currentEditTitleEditable.setText(currentTitle)
-        binding.currentEditDescEditable.setText(currentDesc)
-        when(currentPriority) {
+        binding.currentEditTitleEditable.setText(toDo?.title)
+        binding.currentEditDescEditable.setText(toDo?.description)
+        when(toDo!!.priority) {
             Priority.HIGH -> {
                 binding.autocompleteTextView.setText(items[0], false)
                 binding.autocompleteTextView.setTextColor(ContextCompat.getColor(requireContext(),R.color.red))
@@ -126,29 +107,8 @@ class UpdateFragment : Fragment() {
     private fun confirmItemRemoval() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
-            when(returnDestination) {
-                "Archive" -> {
-                    val itemToBeDeleted = ToDoArchive(
-                        currentId!!.toInt(),
-                        currentOldId!!.toInt(),
-                        currentPriority,
-                        currentTitle,
-                        currentDesc
-                    )
-                    dbViewModel.deleteSingleArchive(itemToBeDeleted)
-                    findNavController().navigate(R.id.action_updateFragment_to_archiveFragment)
-                }
-                "List" -> {
-                    val itemToBeDeleted = ToDoData(
-                        currentId!!.toInt(),
-                        currentPriority,
-                        currentTitle,
-                        currentDesc
-                    )
-                    dbViewModel.deleteSingleDataItem(itemToBeDeleted)
-                    findNavController().navigate(R.id.action_updateFragment_to_listFragment)
-                }
-            }
+            sharedViewModel.deleteNote(toDo!!.id)
+            findNavController().popBackStack()
             Toast.makeText(context, "Successfully Deleted", Toast.LENGTH_SHORT).show()
         }
         alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
@@ -166,24 +126,18 @@ class UpdateFragment : Fragment() {
         val priorityLevel : String = binding.autocompleteTextView.text.toString()
 
         if(sharedViewModel.verifyUserData(toDoTitle, priorityLevel)) {
-            when (returnDestination) {
-                "Archive" -> {
-                    Log.d("jayischecking", "Update To archive")
-                    val itemToBeUpdated = ToDoArchive(
-                        currentId!!.toInt(), currentOldId!!.toInt(), sharedViewModel.parseStringToPriority(priorityLevel), toDoTitle, toDoDesc
-                    )
-                    dbViewModel.updateArchive(itemToBeUpdated)
-                    findNavController().navigate(R.id.action_updateFragment_to_archiveFragment)
-                }
-                "List" -> {
-                    Log.d("jayischecking", "Update To List")
-                    val itemToBeUpdated = ToDoData(
-                        currentId!!.toInt(), sharedViewModel.parseStringToPriority(priorityLevel), toDoTitle, toDoDesc
-                    )
-                    dbViewModel.updateData(itemToBeUpdated)
-                    findNavController().navigate(R.id.action_updateFragment_to_listFragment)
-                }
-            }
+            Log.d(LOG_TAG, "Update To List")
+            val itemToBeUpdated = ToDo(
+                args.currentId,
+                toDo!!.createdTS,
+                toDo!!.archivedTS,
+                toDo!!.isArchived,
+                sharedViewModel.parseStringToPriority(priorityLevel),
+                toDoTitle,
+                toDoDesc
+            )
+            sharedViewModel.updateNote(itemToBeUpdated)
+            findNavController().popBackStack()
             Toast.makeText(context, "Successfully Updated", Toast.LENGTH_SHORT).show()
         }
     }

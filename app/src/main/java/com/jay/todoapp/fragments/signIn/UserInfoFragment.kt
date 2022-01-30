@@ -1,11 +1,11 @@
 package com.jay.todoapp.fragments.signIn
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
@@ -54,7 +54,8 @@ class UserInfoFragment : Fragment() {
                 logButton.setIconResource(R.drawable.ic_logout)
                 logButton.setOnClickListener {
                     mAuth.signOut()
-                    findNavController().popBackStack()
+//                    NetworkToDoRepository.getInstance().setCollection()
+                    findNavController().navigate(R.id.action_userInfoFragment_to_signInFragment)
                 }
             }
         }

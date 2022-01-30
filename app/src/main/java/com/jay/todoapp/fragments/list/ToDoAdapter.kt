@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jay.todoapp.R
 import com.jay.todoapp.data.model.Priority
-import com.jay.todoapp.data.model.ToDoData
+import com.jay.todoapp.data.model.ToDo
 import com.jay.todoapp.utils.ToDoDiffUtil
 
-class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit,
-                  private val onToDoLongPressed: (ToDoData, View) -> Unit)
+class ToDoAdapter(private val onToDoClicked: (ToDo) -> Unit,
+                  private val onToDoLongPressed: (ToDo, View) -> Unit)
     : RecyclerView.Adapter<ToDoAdapter.ToDoViewHolder>(){
 
-    var dataSet: List<ToDoData> = emptyList()
+    var dataSet: List<ToDo> = emptyList()
 
     class ToDoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val toDoTitle: TextView = view.findViewById(R.id.to_do_title)
@@ -48,14 +48,14 @@ class ToDoAdapter(private val onToDoClicked: (ToDoData) -> Unit,
         }
     }
 
-    private fun getItem(position: Int) : ToDoData = dataSet[position]
+    private fun getItem(position: Int) : ToDo = dataSet[position]
 
     override fun getItemCount(): Int = dataSet.size
 
-    fun setData(toDoData: List<ToDoData>) {
-        val diffUtil = ToDoDiffUtil(dataSet, toDoData)
+    fun setData(ToDo: List<ToDo>) {
+        val diffUtil = ToDoDiffUtil(dataSet, ToDo)
         val diffUtilResult = DiffUtil.calculateDiff(diffUtil) // This will calculate the difference
-        dataSet = toDoData
+        dataSet = ToDo
         diffUtilResult.dispatchUpdatesTo(this)
     }
 }
