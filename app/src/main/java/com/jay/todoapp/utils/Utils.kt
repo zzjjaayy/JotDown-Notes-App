@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jay.todoapp.data.model.ToDo
 
 const val LOG_TAG = "jaylogtag"
-
+const val LOCK_ARCHIVE = "MustLockArchive"
+const val SECURE_ARCHIVE = "SecureArchiveSharedPreference"
 fun hideKeyboard(activity: Activity) {
     val inputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     val currentFocusedView = activity.currentFocus

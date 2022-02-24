@@ -49,7 +49,7 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
             if(!searchView.isIconified) {
                 searchView.setQuery("", true)
                 searchView.isIconified = true
-                binding.sortStatus.visibility = View.VISIBLE
+                binding.sortStatus.isInvisible = sharedViewModel.isArchivedListEmpty
             } else findNavController().navigate(R.id.action_archiveFragment_to_listFragment)
         }
         // Inflate the layout for this fragment
@@ -60,7 +60,7 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            floatingActionButton.hide()
+            addButton.hide()
 
             sortStatus.text = getString(R.string.sort_template, sharedViewModel.getStatusText(ListSource.ARCHIVE))
             sortStatus.setOnClickListener{
@@ -68,25 +68,24 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
             }
             noDataText.text = "No Archives Found"
             noDataTip.text = "Swipe left on any note to archive it!"
-            extendedFab.setIconResource(R.drawable.ic_arrow_upward_24)
-            extendedFab.text = getString(R.string.all_notes)
-            // This is to change the constraints of the FAB
-            extendedFab.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                endToEnd = view.id
-            }
-            extendedFab.setOnClickListener {
-                if(!searchView.isIconified) {
-                    searchView.setQuery("", true)
-                    searchView.isIconified = true
-                    binding.sortStatus.visibility = View.VISIBLE
+            archiveBtn.apply {
+                setIconResource(R.drawable.ic_arrow_upward_24)
+                text = getString(R.string.all_notes)
+                updateLayoutParams<ConstraintLayout.LayoutParams> { endToEnd = view.id }
+                setOnClickListener {
+                    if(!searchView.isIconified) {
+                        searchView.setQuery("", true)
+                        searchView.isIconified = true
+                        binding.sortStatus.visibility = View.VISIBLE
+                    }
+                    findNavController().navigate(R.id.action_archiveFragment_to_listFragment)
                 }
-                findNavController().navigate(R.id.action_archiveFragment_to_listFragment)
             }
         }
-        sharedViewModel.toDoList.observe(viewLifecycleOwner, {
-            changeVisibilityOfEmptyIndicators(sharedViewModel.isMainListEmpty)
+        sharedViewModel.toDoList.observe(viewLifecycleOwner) {
+            changeVisibilityOfEmptyIndicators(sharedViewModel.isArchivedListEmpty)
             mAdapter.setData(it)
-        })
+        }
         setUpRecyclerView()
         setHasOptionsMenu(true)
         hideKeyboard(requireActivity())
@@ -166,7 +165,7 @@ class ArchiveFragment : Fragment(), SearchView.OnQueryTextListener {
         item.isArchived = false
         sharedViewModel.updateNote(item)
         Snackbar.make(view, "Removed from Archive", Snackbar.LENGTH_LONG).apply {
-            anchorView = binding.extendedFab
+            anchorView = binding.archiveBtn
             show()
         }
     }

@@ -1,6 +1,7 @@
 package com.jay.todoapp.fragments.list
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -30,9 +31,9 @@ import com.jay.todoapp.data.model.SortOrder
 import com.jay.todoapp.data.model.ToDo
 import com.jay.todoapp.data.viewmodel.ToDoSharedViewModel
 import com.jay.todoapp.databinding.FragmentListBinding
-import com.jay.todoapp.utils.SwipeToArchive
-import com.jay.todoapp.utils.hideKeyboard
+import com.jay.todoapp.utils.*
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
+
 
 class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -70,23 +71,31 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
             sortStatus.setOnClickListener { changeSorting() }
             noDataText.text = "No Notes Found"
             noDataTip.text = "Click the + icon to add one!"
-            floatingActionButton.setOnClickListener {
+            addButton.setOnClickListener {
                 findNavController().navigate(R.id.action_listFragment_to_addFragment)
             }
-            extendedFab.setOnClickListener {
+            archiveBtn.setOnClickListener {
                 if(!searchView.isIconified) {
                     searchView.setQuery("", true)
                     searchView.isIconified = true
                     binding.sortStatus.visibility = View.VISIBLE
                 }
-                findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
+                val shouldLockArchive = requireActivity().getSharedPreferences(SECURE_ARCHIVE, Context.MODE_PRIVATE)
+                    .getBoolean(LOCK_ARCHIVE, false)
+                if(shouldLockArchive) {
+                    BiometricHelper.getInstance(requireActivity()).bio { isAuthSuccessful ->
+                        if(isAuthSuccessful) {
+                            findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
+                        } else Toast.makeText(context, "Authentication Failed", Toast.LENGTH_SHORT).show()
+                    }
+                } else findNavController().navigate(R.id.action_listFragment_to_archiveFragment)
             }
         }
 
-        sharedViewModel.toDoList.observe(viewLifecycleOwner, {
+        sharedViewModel.toDoList.observe(viewLifecycleOwner) {
             changeVisibilityOfEmptyIndicators(sharedViewModel.isMainListEmpty)
             mAdapter.setData(it)
-        })
+        }
 
         setUpRecyclerView()
         setHasOptionsMenu(true)
@@ -179,7 +188,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun restoreDeletedItem(view: View, item: ToDo) {
         Snackbar.make(view, "Archived '${item.title}'", Snackbar.LENGTH_LONG).apply {
-            anchorView = binding.floatingActionButton
+            anchorView = binding.addButton
             show()
         }
     }
