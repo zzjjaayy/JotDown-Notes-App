@@ -1,5 +1,6 @@
 package com.jay.todoapp.fragments.signIn
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,10 +9,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.jay.todoapp.R
+import com.jay.todoapp.data.viewmodel.ToDoSharedViewModel
 import com.jay.todoapp.databinding.FragmentUserInfoBinding
 import com.jay.todoapp.utils.BiometricHelper
 import com.jay.todoapp.utils.LOCK_ARCHIVE
@@ -24,6 +27,7 @@ class UserInfoFragment : Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var authHelper: BiometricHelper
+    private val todoSharedViewModel : ToDoSharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,11 +82,23 @@ class UserInfoFragment : Fragment() {
                 logButton.text = "Sign Out"
                 logButton.setIconResource(R.drawable.ic_logout)
                 logButton.setOnClickListener {
-                    mAuth.signOut()
-                    findNavController().navigate(R.id.action_userInfoFragment_to_signInFragment)
+                    confirmDialog()
                 }
             }
         }
+    }
+
+    private fun confirmDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+            mAuth.signOut()
+            todoSharedViewModel.signOut()
+            findNavController().navigate(R.id.action_userInfoFragment_to_signInFragment)
+        }
+        alertDialogBuilder.setNegativeButton("No") {_,_ -> } // Nothing should happen
+        alertDialogBuilder.setTitle("Sign out?")
+        alertDialogBuilder.setMessage("Caution : You won't be able to access your notes before signing in again!")
+        alertDialogBuilder.create().show()
     }
 
     private fun getShouldLock() = requireActivity()

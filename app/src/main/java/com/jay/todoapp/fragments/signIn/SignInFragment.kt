@@ -112,6 +112,7 @@ class SignInFragment : Fragment() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(LOG_TAG, "signInWithCredential:success")
+                    sharedViewModel.getAllNotes()
                     findNavController().navigate(R.id.action_signInFragment_to_listFragment)
                 } else {
                     // If sign in fails, display a message to the user.

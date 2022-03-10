@@ -249,7 +249,7 @@ class ListFragment : Fragment(), SearchView.OnQueryTextListener {
                 3 -> SortOrder.LOW_PRIORITY
                 else -> SortOrder.LATEST_FIRST
             }
-            sharedViewModel.setSortedListToLiveData(ListSource.MAIN)
+            sharedViewModel.setSource(ListSource.MAIN)
             binding.sortStatus.text = getString(R.string.sort_template, sharedViewModel.getStatusText(ListSource.MAIN))
             dialogInterface.dismiss()
         }

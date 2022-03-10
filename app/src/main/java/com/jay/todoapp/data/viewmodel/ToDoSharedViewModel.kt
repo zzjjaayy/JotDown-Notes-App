@@ -32,7 +32,10 @@ class ToDoSharedViewModel(application: Application) : AndroidViewModel(applicati
     var isMainListEmpty : Boolean = true
     var isArchivedListEmpty : Boolean = true
 
-    init {
+    init { getAllNotes() }
+
+    fun getAllNotes() {
+        Log.d(LOG_TAG, "get all notes")
         viewModelScope.launch(Dispatchers.IO) {
             networkRepo.getAllNotes {
                 mapOfDocIdWithAllToDo = it
@@ -59,7 +62,7 @@ class ToDoSharedViewModel(application: Application) : AndroidViewModel(applicati
         setSortedListToLiveData(source)
     }
 
-    fun setSortedListToLiveData(source: ListSource) {
+    private fun setSortedListToLiveData(source: ListSource) {
         val list: List<ToDo>
         val order = when(source) {
             ListSource.MAIN -> {
@@ -126,5 +129,21 @@ class ToDoSharedViewModel(application: Application) : AndroidViewModel(applicati
             SortOrder.HIGH_PRIORITY ->"High to Low Priority"
             SortOrder.LOW_PRIORITY ->"Low to High Priority"
         }
+    }
+
+    fun signOut() {
+        resetNoteData()
+        networkRepo.signOut()
+    }
+
+    private fun resetNoteData() {
+        mainList = emptyList()
+        archivedList = emptyList()
+        listSource = ListSource.MAIN
+        mainSortOrder = SortOrder.LATEST_FIRST
+        archivedSortOrder = SortOrder.LATEST_FIRST
+        isMainListEmpty = true
+        isArchivedListEmpty = true
+        toDoList.postValue(emptyList())
     }
 }

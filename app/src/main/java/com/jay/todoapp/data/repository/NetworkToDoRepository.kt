@@ -2,7 +2,7 @@ package com.jay.todoapp.data.repository
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.jay.todoapp.data.model.ToDo
@@ -10,10 +10,8 @@ import com.jay.todoapp.utils.LOG_TAG
 
 class NetworkToDoRepository private constructor() {
 
-    private val fireStore = Firebase.firestore
     private val mAuth = FirebaseAuth.getInstance()
-    private var currentUserCollection : CollectionReference? =
-        mAuth.currentUser?.uid?.let { fireStore.collection(it) }
+    private var listenerReg : ListenerRegistration? = null
 
     companion object {
         private var INSTANCE : NetworkToDoRepository? = null
@@ -25,8 +23,15 @@ class NetworkToDoRepository private constructor() {
         }
     }
 
+    fun signOut() {
+        listenerReg?.remove()
+        listenerReg = null
+        Log.d(LOG_TAG, "sign out -> ${getCurrentUserCollection()} and $listenerReg")
+    }
+
     fun getAllNotes(resultCallback: (MutableMap<String, ToDo>) -> Unit) {
-        currentUserCollection?.addSnapshotListener { value, error ->
+        listenerReg?.remove()
+        listenerReg = getCurrentUserCollection()?.addSnapshotListener { value, error ->
             if (error != null) {
                 Log.w(LOG_TAG, "Listen failed.", error)
                 return@addSnapshotListener
@@ -35,10 +40,11 @@ class NetworkToDoRepository private constructor() {
                 docSnap.id to docSnap.toObject(ToDo::class.java).also { it.id=docSnap.id }
             }?.toMap()?.toMutableMap()?.also { resultCallback(it) }
         }
+        Log.d(LOG_TAG, "Reg -> $listenerReg")
     }
 
     fun addNote(toDo: ToDo) {
-        val ref = currentUserCollection?.add(toDo)
+        val ref = getCurrentUserCollection()?.add(toDo)
         ref?.addOnCompleteListener {
             Log.d(LOG_TAG, "id is ${it.result.id}")
         }?.addOnFailureListener {
@@ -48,12 +54,15 @@ class NetworkToDoRepository private constructor() {
 
     fun updateNote(toDo: ToDo) {
         Log.d(LOG_TAG, "id is ${toDo.id}")
-        currentUserCollection?.document(toDo.id)?.also {
+        getCurrentUserCollection()?.document(toDo.id)?.also {
             toDo.id = ""
             Log.d(LOG_TAG, "todo created -> ${toDo.createdTS}")
             it.set(toDo)
         }
     }
 
-    fun deleteNote(id: String) = currentUserCollection?.document(id)?.delete()
+    fun deleteNote(id: String) = getCurrentUserCollection()?.document(id)?.delete()
+
+    private fun getCurrentUserCollection() =
+        mAuth.currentUser?.uid?.let{ Firebase.firestore.collection(it) }
 }
